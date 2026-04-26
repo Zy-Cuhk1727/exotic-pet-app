@@ -1,10 +1,28 @@
 import { useEffect, useMemo, useState } from "react";
 import { defaultMessages, quickPrompts } from "../data/mockData";
 
+const assistantAvatars = [
+  { id: "frog", face: "F", label: "Cartoon frog", className: "frog" },
+  { id: "cricket", face: "C", label: "Cartoon cricket", className: "cricket" },
+  { id: "gecko", face: "G", label: "Cartoon gecko", className: "gecko" },
+  { id: "turtle", face: "T", label: "Cartoon turtle", className: "turtle" },
+  { id: "newt", face: "N", label: "Cartoon newt", className: "newt" },
+  { id: "beetle", face: "B", label: "Cartoon beetle", className: "beetle" },
+];
+
+function getRandomAvatarId() {
+  return assistantAvatars[Math.floor(Math.random() * assistantAvatars.length)].id;
+}
+
+function getAssistantAvatar(session) {
+  return assistantAvatars.find((avatar) => avatar.id === session?.assistantAvatarId) || assistantAvatars[0];
+}
+
 function createSession(messages = defaultMessages) {
   return {
     id: globalThis.crypto?.randomUUID?.() || String(Date.now()),
     title: "New reptile chat",
+    assistantAvatarId: getRandomAvatarId(),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     messages,
@@ -45,6 +63,7 @@ function buildAppContext(activePet, pets) {
       species: pet.species,
       habitat: pet.habitat,
       mood: pet.mood,
+      condition: pet.condition,
       lastSync: pet.lastSync,
       activity: `${pet.activity}%`,
       metrics: pet.metrics.map((metric) => ({
@@ -105,6 +124,7 @@ function Chat({ activePet, pets }) {
 
   const activeSession = sessions.find((session) => session.id === activeSessionId) || sessions[0];
   const messages = activeSession?.messages || defaultMessages;
+  const assistantAvatar = getAssistantAvatar(activeSession);
   const canSend = useMemo(() => input.trim().length > 0 && !isLoading, [input, isLoading]);
 
   useEffect(() => {
@@ -114,8 +134,12 @@ function Chat({ activePet, pets }) {
       if (!isMounted) return;
 
       if (savedSessions.length > 0) {
-        setSessions(savedSessions);
-        setActiveSessionId(savedSessions[0].id);
+        const normalizedSessions = savedSessions.map((session) => ({
+          ...session,
+          assistantAvatarId: session.assistantAvatarId || getRandomAvatarId(),
+        }));
+        setSessions(normalizedSessions);
+        setActiveSessionId(normalizedSessions[0].id);
         return;
       }
 
@@ -135,6 +159,7 @@ function Chat({ activePet, pets }) {
     const nextSession = {
       ...activeSession,
       title: getTitleFromMessages(nextMessages),
+      assistantAvatarId: activeSession.assistantAvatarId || getRandomAvatarId(),
       updatedAt: now,
       messages: nextMessages,
     };
@@ -240,13 +265,19 @@ function Chat({ activePet, pets }) {
       <section className="chat-window" aria-live="polite">
         {messages.map((message, index) => (
           <article className={`message ${message.role}`} key={`${message.role}-${index}`}>
-            {message.role === "assistant" && <span className="bubble-avatar">AI</span>}
+            {message.role === "assistant" && (
+              <span className={`bubble-avatar ${assistantAvatar.className}`} title={assistantAvatar.label}>
+                {assistantAvatar.face}
+              </span>
+            )}
             <p>{message.content}</p>
           </article>
         ))}
         {isLoading && (
           <article className="message assistant">
-            <span className="bubble-avatar">AI</span>
+            <span className={`bubble-avatar ${assistantAvatar.className}`} title={assistantAvatar.label}>
+              {assistantAvatar.face}
+            </span>
             <p>Thinking...</p>
           </article>
         )}

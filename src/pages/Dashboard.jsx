@@ -1,4 +1,6 @@
 function buildPoints(data, field) {
+  if (data.length < 2) return "";
+
   const width = 300;
   const height = 120;
   const values = data.map((item) => item[field]);
@@ -15,6 +17,8 @@ function buildPoints(data, field) {
 }
 
 function getAxisTicks(data, field) {
+  if (data.length === 0) return [];
+
   const values = data.map((item) => item[field]);
   const min = Math.floor(Math.min(...values) - 1);
   const max = Math.ceil(Math.max(...values) + 1);
@@ -27,11 +31,201 @@ function getAxisTicks(data, field) {
   ];
 }
 
-function Dashboard({ activePetId, onSelectPet, pet, pets }) {
+import { useState } from "react";
+
+const conditionOptions = [
+  { label: "Normal", tone: "green" },
+  { label: "Molting watch", tone: "blue" },
+  { label: "Breeding season watch", tone: "orange" },
+  { label: "Injured", tone: "yellow" },
+  { label: "Missing", tone: "red" },
+  { label: "Deceased", tone: "black" },
+];
+
+const emptyPetForm = {
+  name: "",
+  species: "",
+  image: "",
+  imageName: "",
+  habitat: "",
+  temperature: "28",
+  humidity: "55",
+  activity: "55",
+  conditionLabel: "Normal",
+  conditionTone: "green",
+  conditionDetail: "",
+  action: "",
+  actionDetail: "",
+  deathCause: "",
+};
+
+function getMetricValue(pet, labels, fallback) {
+  const metric = pet.metrics.find((item) => labels.includes(item.label));
+  return metric ? String(metric.value) : fallback;
+}
+
+function petToForm(pet) {
+  const option = conditionOptions.find((item) => item.label === pet.condition?.label) || conditionOptions[0];
+
+  return {
+    name: pet.name || "",
+    species: pet.species || "",
+    image: pet.image || "",
+    imageName: "Current profile photo",
+    habitat: pet.habitat || "",
+    temperature: getMetricValue(pet, ["Temperature", "Warm side"], "28"),
+    humidity: getMetricValue(pet, ["Humidity"], "55"),
+    activity: String(pet.activity ?? getMetricValue(pet, ["Activity"], "55")),
+    conditionLabel: option.label,
+    conditionTone: option.tone,
+    conditionDetail: pet.condition?.detail || "",
+    action: pet.action || "",
+    actionDetail: pet.actionDetail || "",
+    deathCause: pet.condition?.deathCause || "",
+  };
+}
+
+function validatePetForm(form) {
+  const missingFields = [];
+  const requiredTextFields = [
+    ["name", "Name"],
+    ["species", "Species"],
+    ["image", "Local pet photo"],
+    ["habitat", "Habitat"],
+    ["conditionDetail", "Condition detail"],
+    ["action", "Suggested action"],
+    ["actionDetail", "Action detail"],
+  ];
+
+  requiredTextFields.forEach(([field, label]) => {
+    if (!String(form[field] || "").trim()) missingFields.push(label);
+  });
+
+  [
+    ["temperature", "Temperature"],
+    ["humidity", "Humidity"],
+    ["activity", "Activity"],
+  ].forEach(([field, label]) => {
+    if (!String(form[field] || "").trim() || !Number.isFinite(Number(form[field]))) {
+      missingFields.push(label);
+    }
+  });
+
+  if (form.conditionLabel === "Deceased" && !form.deathCause.trim()) {
+    missingFields.push("Suspected cause");
+  }
+
+  return missingFields;
+}
+
+function getDisplayUnit(unit) {
+  return unit === "掳C" || unit === "C" ? "°C" : unit;
+}
+
+function Dashboard({ activePetId, onSelectPet, onAddPet, onEditPet, onDeletePet, pet, pets, mockPetIds = [] }) {
+  const hasTrendData = pet.trend.length >= 2;
+  const builtInPets = pets.filter((item) => mockPetIds.includes(item.id));
+  const customPets = pets.filter((item) => !mockPetIds.includes(item.id));
+  const activePetIsCustom = customPets.some((item) => item.id === activePetId);
+  const selectedCustomPet = customPets.find((item) => item.id === activePetId);
+  const canEditActivePet = !mockPetIds.includes(pet.id);
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [editingPetId, setEditingPetId] = useState("");
+  const [newPet, setNewPet] = useState(emptyPetForm);
+  const [isSavingPet, setIsSavingPet] = useState(false);
+  const [saveError, setSaveError] = useState("");
+  const [isDeletingPet, setIsDeletingPet] = useState(false);
+  const isEditingPet = Boolean(editingPetId);
+
+  const updateNewPet = (field, value) => {
+    if (field === "conditionLabel") {
+      const option = conditionOptions.find((item) => item.label === value) || conditionOptions[0];
+      setNewPet((current) => ({ ...current, conditionLabel: option.label, conditionTone: option.tone }));
+      return;
+    }
+
+    setNewPet((current) => ({ ...current, [field]: value }));
+  };
+
+  const openAddPet = () => {
+    setEditingPetId("");
+    setNewPet(emptyPetForm);
+    setSaveError("");
+    setIsAddOpen(true);
+  };
+
+  const openEditPet = () => {
+    if (!canEditActivePet) return;
+    setEditingPetId(pet.id);
+    setNewPet(petToForm(pet));
+    setSaveError("");
+    setIsAddOpen(true);
+  };
+
+  const closePetForm = () => {
+    setIsAddOpen(false);
+    setEditingPetId("");
+    setSaveError("");
+  };
+
+  const updateImageFile = (file) => {
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setNewPet((current) => ({
+        ...current,
+        image: String(reader.result || ""),
+        imageName: file.name,
+      }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const submitNewPet = async (event) => {
+    event.preventDefault();
+    if (isSavingPet) return;
+
+    const missingFields = validatePetForm(newPet);
+    if (missingFields.length > 0) {
+      setSaveError(`Please fill: ${missingFields.join(", ")}.`);
+      return;
+    }
+
+    setIsSavingPet(true);
+    setSaveError("");
+    try {
+      if (isEditingPet) {
+        await onEditPet(editingPetId, newPet);
+      } else {
+        await onAddPet(newPet);
+      }
+      closePetForm();
+      setNewPet(emptyPetForm);
+    } catch (error) {
+      setSaveError(error.message || "Failed to save pet. Please restart the backend server.");
+    } finally {
+      setIsSavingPet(false);
+    }
+  };
+
+  const deleteActivePet = async () => {
+    if (pets.length <= 1 || isDeletingPet) return;
+    const confirmed = window.confirm(`Delete ${pet.name}? This removes saved custom pets from local data.`);
+    if (!confirmed) return;
+
+    setIsDeletingPet(true);
+    try {
+      await onDeletePet(pet.id);
+    } finally {
+      setIsDeletingPet(false);
+    }
+  };
+
   return (
     <div className="page dashboard-page">
       <section className="pet-switcher" aria-label="Reptile profiles">
-        {pets.map((item) => (
+        {builtInPets.map((item) => (
           <button
             className={item.id === activePetId ? "pet-chip active" : "pet-chip"}
             key={item.id}
@@ -43,9 +237,123 @@ function Dashboard({ activePetId, onSelectPet, pet, pets }) {
             </span>
             <strong>{item.name}</strong>
             <small>{item.species}</small>
+            <em className={`condition-dot ${item.condition.tone}`}>{item.condition.label}</em>
           </button>
         ))}
+        {customPets.length > 0 && (
+          <label className={activePetIsCustom ? "pet-more active" : "pet-more"}>
+            <div className="pet-more-preview">
+              <span>
+                {selectedCustomPet ? <img alt="" src={selectedCustomPet.image} /> : "+"}
+              </span>
+              <div>
+                <strong>{selectedCustomPet?.name || "Custom pets"}</strong>
+                <small>{selectedCustomPet?.species || `${customPets.length} saved profiles`}</small>
+              </div>
+            </div>
+            <div className="pet-more-select">
+              <select value={activePetIsCustom ? activePetId : ""} onChange={(event) => onSelectPet(event.target.value)}>
+                <option value="" disabled>
+                  Select pet
+                </option>
+                {customPets.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.name} · {item.species}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </label>
+        )}
+        <button className="pet-add-card" onClick={openAddPet} type="button">
+          <span>+</span>
+          <strong>Add pet</strong>
+          <small>Web photo + custom data</small>
+        </button>
       </section>
+
+      {isAddOpen && (
+        <section className="add-pet-panel panel" aria-label={isEditingPet ? "Edit pet" : "Add new pet"}>
+          <div className="panel-heading">
+            <div>
+              <p className="section-label">Custom profile</p>
+              <h3>{isEditingPet ? `Edit ${newPet.name}` : "Add a reptile pet"}</h3>
+            </div>
+            <button className="ghost-button" onClick={closePetForm} type="button">Close</button>
+          </div>
+
+          <form className="add-pet-form" onSubmit={submitNewPet}>
+            <label>
+              Name
+              <input value={newPet.name} onChange={(event) => updateNewPet("name", event.target.value)} placeholder="e.g. Kiwi" />
+            </label>
+            <label>
+              Species
+              <input value={newPet.species} onChange={(event) => updateNewPet("species", event.target.value)} placeholder="e.g. Green Iguana" />
+            </label>
+            <label className="wide-field image-upload-field">
+              Local pet photo
+              <input accept="image/*" type="file" onChange={(event) => updateImageFile(event.target.files?.[0])} />
+              <div className="image-upload-preview">
+                {newPet.image ? <img alt="Pet preview" src={newPet.image} /> : <span>No image selected</span>}
+                <strong>{newPet.imageName || "Choose a photo from this computer"}</strong>
+              </div>
+            </label>
+            <label className="wide-field">
+              Habitat
+              <input value={newPet.habitat} onChange={(event) => updateNewPet("habitat", event.target.value)} placeholder="Custom enclosure" />
+            </label>
+            <label>
+              Temperature
+              <input type="number" step="0.1" value={newPet.temperature} onChange={(event) => updateNewPet("temperature", event.target.value)} />
+            </label>
+            <label>
+              Humidity
+              <input type="number" value={newPet.humidity} onChange={(event) => updateNewPet("humidity", event.target.value)} />
+            </label>
+            <label>
+              Activity
+              <input type="number" value={newPet.activity} onChange={(event) => updateNewPet("activity", event.target.value)} />
+            </label>
+            <label>
+              Condition
+              <select value={newPet.conditionLabel} onChange={(event) => updateNewPet("conditionLabel", event.target.value)}>
+                {conditionOptions.map((option) => (
+                  <option key={option.label} value={option.label}>{option.label}</option>
+                ))}
+              </select>
+            </label>
+            {newPet.conditionLabel === "Deceased" && (
+              <label>
+                Suspected cause
+                <select value={newPet.deathCause} onChange={(event) => updateNewPet("deathCause", event.target.value)}>
+                  <option value="">Select cause</option>
+                  <option value="Hypothermia">Hypothermia</option>
+                  <option value="Dehydration">Dehydration</option>
+                  <option value="Hunger">Hunger</option>
+                  <option value="Unknown">Unknown</option>
+                </select>
+              </label>
+            )}
+            <label className="wide-field">
+              Condition detail
+              <input value={newPet.conditionDetail} onChange={(event) => updateNewPet("conditionDetail", event.target.value)} placeholder="What should the system monitor?" />
+            </label>
+            <label>
+              Suggested action
+              <input value={newPet.action} onChange={(event) => updateNewPet("action", event.target.value)} placeholder="Monitor new profile" />
+            </label>
+            <label className="wide-field">
+              Action detail
+              <input value={newPet.actionDetail} onChange={(event) => updateNewPet("actionDetail", event.target.value)} placeholder="Care advice shown in alerts and AI context" />
+            </label>
+            <button className="submit-pet-button" disabled={isSavingPet} type="submit">
+              {isSavingPet ? "Saving..." : isEditingPet ? "Save changes" : "Create pet"}
+            </button>
+            {saveError && <p className="form-error">{saveError}</p>}
+          </form>
+        </section>
+      )}
 
       <section className="hero-panel">
         <div>
@@ -56,9 +364,23 @@ function Dashboard({ activePetId, onSelectPet, pet, pets }) {
           <p className="muted">
             {pet.species} · {pet.habitat} · Last sensor sync: {pet.lastSync}
           </p>
+          <div className={`condition-banner ${pet.condition.tone}`}>
+            <strong>{pet.condition.label}</strong>
+            <span>{pet.condition.detail}</span>
+          </div>
         </div>
         <div className="cartoon-pet" aria-label={`${pet.species} profile`}>
           <img alt={pet.species} src={pet.image} />
+        </div>
+        <div className="pet-action-buttons">
+          {canEditActivePet && (
+            <button className="edit-pet-button" onClick={openEditPet} type="button">
+              Edit
+            </button>
+          )}
+          <button className="delete-pet-button" disabled={pets.length <= 1 || isDeletingPet} onClick={deleteActivePet} type="button">
+            {isDeletingPet ? "Deleting..." : "Delete"}
+          </button>
         </div>
       </section>
 
@@ -68,7 +390,7 @@ function Dashboard({ activePetId, onSelectPet, pet, pets }) {
             <p>{metric.label}</p>
             <strong>
               {metric.value}
-              <small>{metric.unit}</small>
+              <small>{getDisplayUnit(metric.unit)}</small>
             </strong>
             <span>{metric.status}</span>
           </article>
@@ -84,25 +406,31 @@ function Dashboard({ activePetId, onSelectPet, pet, pets }) {
           <span className="pill">Live mock IoT</span>
         </div>
 
-        <svg className="chart" viewBox="0 0 340 150" role="img" aria-label="Temperature and humidity trend chart">
-          <line x1="34" y1="126" x2="334" y2="126" />
-          <line x1="34" y1="80" x2="334" y2="80" />
-          <line x1="34" y1="34" x2="334" y2="34" />
-          {getAxisTicks(pet.trend, "temp").map((tick) => (
-            <text className="axis-label" key={tick.y} x="26" y={tick.y}>
-              {tick.label}°C
-            </text>
-          ))}
-          <g transform="translate(34 0)">
-            <polyline points={buildPoints(pet.trend, "humidity")} className="humidity-line" />
-            <polyline points={buildPoints(pet.trend, "temp")} className="temp-line" />
-          </g>
-          {pet.trend.map((item, index) => (
-            <text key={item.time} x={34 + (index / (pet.trend.length - 1)) * 300} y="146">
-              {item.time}
-            </text>
-          ))}
-        </svg>
+        {hasTrendData ? (
+          <svg className="chart" viewBox="0 0 340 150" role="img" aria-label="Temperature and humidity trend chart">
+            <line x1="34" y1="126" x2="334" y2="126" />
+            <line x1="34" y1="80" x2="334" y2="80" />
+            <line x1="34" y1="34" x2="334" y2="34" />
+            {getAxisTicks(pet.trend, "temp").map((tick) => (
+              <text className="axis-label" key={tick.y} x="26" y={tick.y}>
+                {tick.label}°C
+              </text>
+            ))}
+            <g transform="translate(34 0)">
+              <polyline points={buildPoints(pet.trend, "humidity")} className="humidity-line" />
+              <polyline points={buildPoints(pet.trend, "temp")} className="temp-line" />
+            </g>
+            {pet.trend.map((item, index) => (
+              <text key={item.time} x={34 + (index / (pet.trend.length - 1)) * 300} y="146">
+                {item.time}
+              </text>
+            ))}
+          </svg>
+        ) : (
+          <div className="chart-empty">
+            Waiting for live sensor samples...
+          </div>
+        )}
 
         <div className="legend">
           <span><i className="dot temp" /> Temperature</span>
@@ -126,6 +454,7 @@ function Dashboard({ activePetId, onSelectPet, pet, pets }) {
         <p className="section-label">Species profile</p>
         <h3>{pet.species}</h3>
         <p>{pet.habitat}</p>
+        <p>{pet.condition.detail}</p>
         <strong>{pet.alerts.length} active alert{pet.alerts.length === 1 ? "" : "s"}</strong>
       </section>
     </div>

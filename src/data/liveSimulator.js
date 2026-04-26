@@ -1,4 +1,4 @@
-function clamp(value, min, max) {
+﻿function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
 }
 
@@ -10,6 +10,7 @@ function getCurrentTimeLabel() {
   return new Intl.DateTimeFormat("en-US", {
     hour: "2-digit",
     minute: "2-digit",
+    second: "2-digit",
     hour12: false,
   }).format(new Date());
 }
@@ -46,7 +47,39 @@ function getTemperatureStatus(species, temp) {
   return "Ideal";
 }
 
+function getTerminalStatusAlerts(pet) {
+  if (pet.condition?.label === "Deceased") {
+    const deathCause = pet.condition?.deathCause || "Unknown";
+    return [
+      {
+        title: "Death recorded",
+        message: `${pet.name} is marked deceased. Suspected cause: ${deathCause}. No other live husbandry alerts will be generated for this profile.`,
+        time: "Just now",
+        severity: "Critical",
+        isLive: true,
+      },
+    ];
+  }
+
+  if (pet.condition?.label === "Missing") {
+    return [
+      {
+        title: "Pet missing from camera",
+        message: `${pet.name} is not visible in the latest camera scan. Check enclosure doors, hides, canopy, and nearby room area immediately.`,
+        time: "Just now",
+        severity: "Critical",
+        isLive: true,
+      },
+    ];
+  }
+
+  return null;
+}
+
 function updateAlerts(pet, temp, humidity, activity) {
+  const terminalStatusAlerts = getTerminalStatusAlerts(pet);
+  if (terminalStatusAlerts) return terminalStatusAlerts;
+
   const alerts = pet.alerts.filter((alert) => !alert.isLive);
   const humidityStatus = getHumidityStatus(pet.species, humidity);
   const temperatureStatus = getTemperatureStatus(pet.species, temp);
@@ -54,7 +87,7 @@ function updateAlerts(pet, temp, humidity, activity) {
   if (temperatureStatus === "Warm") {
     alerts.unshift({
       title: "Live temperature watch",
-      message: `${pet.name}'s latest temperature is ${temp}C, which is above the comfort range in this prototype.`,
+      message: `${pet.name}'s latest temperature is ${temp}°C, which is above the comfort range in this prototype.`,
       time: "Just now",
       severity: "Medium",
       isLive: true,
@@ -88,12 +121,14 @@ export function simulatePetTick(pets) {
   const time = getCurrentTimeLabel();
 
   return pets.map((pet) => {
+    const isMissing = pet.condition?.label === "Missing";
+    const isDeceased = pet.condition?.label === "Deceased";
     const previousTemp = getMetricValue(pet.metrics, ["Temperature", "Warm side"], pet.trend.at(-1)?.temp || 28);
     const previousHumidity = getMetricValue(pet.metrics, ["Humidity"], pet.trend.at(-1)?.humidity || 50);
 
     const temp = round(clamp(previousTemp + (Math.random() - 0.46) * 0.45, 20, 38));
     const humidity = Math.round(clamp(previousHumidity + (Math.random() - 0.5) * 2.4, 25, 92));
-    const activity = Math.round(clamp(pet.activity + (Math.random() - 0.5) * 8, 18, 92));
+    const activity = isMissing || isDeceased ? 0 : Math.round(clamp(pet.activity + (Math.random() - 0.5) * 8, 18, 92));
 
     let metrics = updateMetric(pet.metrics, "Temperature", temp, getTemperatureStatus(pet.species, temp));
     metrics = updateMetric(metrics, "Warm side", temp, getTemperatureStatus(pet.species, temp));
@@ -107,8 +142,17 @@ export function simulatePetTick(pets) {
       trend,
       activity,
       lastSync: "Just now",
-      cameraTemp: `${temp}C`,
+      cameraTemp: `${temp}°C`,
       alerts: updateAlerts(pet, temp, humidity, activity),
     };
   });
 }
+
+export function clearInitialTrend(pets) {
+  return pets.map((pet) => ({
+    ...pet,
+    trend: [],
+    alerts: getTerminalStatusAlerts(pet) || pet.alerts,
+  }));
+}
+

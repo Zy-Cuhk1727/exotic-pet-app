@@ -1,6 +1,10 @@
 import http from "node:http";
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const ROOT_DIR = dirname(fileURLToPath(import.meta.url));
 
 function loadLocalEnv() {
   if (!existsSync(".env")) return;
@@ -30,10 +34,13 @@ const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 const DEEPSEEK_MODEL = process.env.DEEPSEEK_MODEL || "deepseek-v4-flash";
 const DEEPSEEK_MAX_TOKENS = Number(process.env.DEEPSEEK_MAX_TOKENS || 700);
 const DEEPSEEK_URL = "https://api.deepseek.com/chat/completions";
-const LOG_DIR = "logs";
+const LOG_DIR = join(ROOT_DIR, "logs");
 const USAGE_LOG_PATH = `${LOG_DIR}/ai-usage.jsonl`;
-const LOCAL_DATA_DIR = "local-data";
+const LOCAL_DATA_DIR = join(ROOT_DIR, "local-data");
 const CHAT_SESSIONS_PATH = `${LOCAL_DATA_DIR}/chat-sessions.json`;
+const CUSTOM_PETS_PATH = `${LOCAL_DATA_DIR}/custom-pets.json`;
+const DELETED_PETS_PATH = `${LOCAL_DATA_DIR}/deleted-pets.json`;
+const MAX_JSON_BODY_BYTES = 8_000_000;
 
 const systemPrompt = `
 You are ReptiMind, an AI assistant for reptile pet care.
@@ -64,13 +71,21 @@ function ensureLocalDataFile() {
   if (!existsSync(CHAT_SESSIONS_PATH)) {
     writeFileSync(CHAT_SESSIONS_PATH, "[]\n", "utf8");
   }
+
+  if (!existsSync(CUSTOM_PETS_PATH)) {
+    writeFileSync(CUSTOM_PETS_PATH, "[]\n", "utf8");
+  }
+
+  if (!existsSync(DELETED_PETS_PATH)) {
+    writeFileSync(DELETED_PETS_PATH, "[]\n", "utf8");
+  }
 }
 
 function readSessions() {
   ensureLocalDataFile();
 
   try {
-    const sessions = JSON.parse(readFileSync(CHAT_SESSIONS_PATH, "utf8"));
+    const sessions = JSON.parse(readFileSync(CHAT_SESSIONS_PATH, "utf8").replace(/^\uFEFF/, ""));
     return Array.isArray(sessions) ? sessions : [];
   } catch {
     return [];
@@ -80,6 +95,108 @@ function readSessions() {
 function writeSessions(sessions) {
   ensureLocalDataFile();
   writeFileSync(CHAT_SESSIONS_PATH, `${JSON.stringify(sessions, null, 2)}\n`, "utf8");
+}
+
+function readCustomPets() {
+  ensureLocalDataFile();
+
+  try {
+    const pets = JSON.parse(readFileSync(CUSTOM_PETS_PATH, "utf8").replace(/^\uFEFF/, ""));
+    if (Array.isArray(pets)) return pets;
+    return pets && typeof pets === "object" ? [pets] : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeCustomPets(pets) {
+  ensureLocalDataFile();
+  writeFileSync(CUSTOM_PETS_PATH, `${JSON.stringify(pets, null, 2)}\n`, "utf8");
+}
+
+function readDeletedPetIds() {
+  ensureLocalDataFile();
+
+  try {
+    const ids = JSON.parse(readFileSync(DELETED_PETS_PATH, "utf8").replace(/^\uFEFF/, ""));
+    return Array.isArray(ids) ? ids : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeDeletedPetIds(ids) {
+  ensureLocalDataFile();
+  writeFileSync(DELETED_PETS_PATH, `${JSON.stringify([...new Set(ids)], null, 2)}\n`, "utf8");
+}
+
+function normalizeCustomPet(pet) {
+  const now = new Date().toISOString();
+
+  return {
+    ...pet,
+    id: String(pet.id || `custom-${randomUUID()}`),
+    name: String(pet.name || "Custom pet").slice(0, 80),
+    species: String(pet.species || "Unknown species").slice(0, 80),
+    image: String(pet.image || "").slice(0, 2_000_000),
+    createdAt: String(pet.createdAt || now),
+    updatedAt: now,
+  };
+}
+
+async function handleCustomPets(request, response) {
+  if (request.method === "GET" && request.url === "/api/custom-pets") {
+    sendJson(response, 200, { pets: readCustomPets() });
+    return;
+  }
+
+  if (request.method === "POST" && request.url === "/api/custom-pets") {
+    const body = await readJsonBody(request);
+    const pet = normalizeCustomPet(body.pet || {});
+    const pets = readCustomPets();
+    const existingIndex = pets.findIndex((item) => item.id === pet.id);
+
+    if (existingIndex >= 0) {
+      pets[existingIndex] = pet;
+    } else {
+      pets.push(pet);
+    }
+
+    writeCustomPets(pets);
+    sendJson(response, 200, { pet });
+    return;
+  }
+
+  if (request.method === "DELETE" && request.url.startsWith("/api/custom-pets/")) {
+    const id = decodeURIComponent(request.url.replace("/api/custom-pets/", ""));
+    writeCustomPets(readCustomPets().filter((pet) => pet.id !== id));
+    sendJson(response, 200, { ok: true });
+    return;
+  }
+
+  sendJson(response, 404, { error: "Not found." });
+}
+
+async function handleDeletedPets(request, response) {
+  if (request.method === "GET" && request.url === "/api/deleted-pets") {
+    sendJson(response, 200, { ids: readDeletedPetIds() });
+    return;
+  }
+
+  if (request.method === "POST" && request.url === "/api/deleted-pets") {
+    const body = await readJsonBody(request);
+    const id = String(body.id || "");
+    if (!id) {
+      sendJson(response, 400, { error: "id is required." });
+      return;
+    }
+
+    writeDeletedPetIds([...readDeletedPetIds(), id]);
+    sendJson(response, 200, { ok: true });
+    return;
+  }
+
+  sendJson(response, 404, { error: "Not found." });
 }
 
 function normalizeSession(session) {
@@ -97,6 +214,7 @@ function normalizeSession(session) {
   return {
     id: String(session.id || randomUUID()),
     title: String(session.title || "New chat").slice(0, 80),
+    assistantAvatarId: String(session.assistantAvatarId || "frog").slice(0, 40),
     createdAt: String(session.createdAt || now),
     updatedAt: now,
     messages,
@@ -168,16 +286,21 @@ function logUsage({ usage, model, activePetName, latestUserMessage }) {
 function readJsonBody(request) {
   return new Promise((resolve, reject) => {
     let body = "";
+    let isTooLarge = false;
 
     request.on("data", (chunk) => {
+      if (isTooLarge) return;
+
       body += chunk;
-      if (body.length > 1_000_000) {
-        request.destroy();
-        reject(new Error("Request body is too large"));
+      if (body.length > MAX_JSON_BODY_BYTES) {
+        isTooLarge = true;
+        reject(new Error("Request body is too large. Please choose a smaller image."));
       }
     });
 
     request.on("end", () => {
+      if (isTooLarge) return;
+
       try {
         resolve(body ? JSON.parse(body) : {});
       } catch {
@@ -214,6 +337,14 @@ function normalizeAppContext(appContext) {
       species: String(pet.species || "").slice(0, 80),
       habitat: String(pet.habitat || "").slice(0, 120),
       mood: String(pet.mood || "").slice(0, 120),
+      condition:
+        pet.condition && typeof pet.condition === "object"
+          ? {
+              label: String(pet.condition.label || "").slice(0, 80),
+              tone: String(pet.condition.tone || "").slice(0, 40),
+              detail: String(pet.condition.detail || "").slice(0, 220),
+            }
+          : null,
       lastSync: String(pet.lastSync || "").slice(0, 80),
       activity: String(pet.activity || "").slice(0, 40),
       metrics: Array.isArray(pet.metrics)
@@ -255,6 +386,7 @@ function formatAppContext(appContext) {
         `Species: ${pet.species}`,
         `Habitat: ${pet.habitat}`,
         `Mood: ${pet.mood}`,
+        `Condition: ${pet.condition?.label || "Unknown"}${pet.condition?.detail ? ` - ${pet.condition.detail}` : ""}`,
         `Last sync: ${pet.lastSync}`,
         `Activity: ${pet.activity}`,
         `Metrics: ${metrics || "No metrics"}`,
@@ -352,6 +484,20 @@ const server = http.createServer((request, response) => {
     return;
   }
 
+  if (request.url === "/api/custom-pets" || request.url.startsWith("/api/custom-pets/")) {
+    handleCustomPets(request, response).catch((error) => {
+      sendJson(response, 500, { error: error.message || "Server error." });
+    });
+    return;
+  }
+
+  if (request.url === "/api/deleted-pets") {
+    handleDeletedPets(request, response).catch((error) => {
+      sendJson(response, 500, { error: error.message || "Server error." });
+    });
+    return;
+  }
+
   sendJson(response, 404, { error: "Not found." });
 });
 
@@ -360,4 +506,5 @@ server.listen(PORT, "127.0.0.1", () => {
   console.log("Using provider: deepseek");
   console.log(`Using model: ${DEEPSEEK_MODEL}`);
   console.log(`Max output tokens: ${DEEPSEEK_MAX_TOKENS}`);
+  console.log(`Local data file: ${CUSTOM_PETS_PATH}`);
 });

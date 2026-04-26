@@ -11,7 +11,7 @@ function Camera({ pet }) {
         <div className="fake-video" aria-label={`${pet.name} demo camera preview`}>
           <div className="branch" />
           <div className="heat-zone">{pet.cameraTemp}</div>
-          <div className="sleeping-pet">{pet.icon}</div>
+          <img className="sleeping-pet" alt={pet.species} src={pet.image} />
           <p>{pet.habitat}</p>
         </div>
       </section>

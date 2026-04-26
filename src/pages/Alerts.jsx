@@ -2,6 +2,7 @@ function Alerts({ pet, pets }) {
   const allAlerts = pets.flatMap((item) =>
     item.alerts.map((alert) => ({
       ...alert,
+      image: item.image,
       petName: item.name,
       species: item.species,
     })),
@@ -20,7 +21,9 @@ function Alerts({ pet, pets }) {
       <section className="alert-list" aria-label="Recent alerts">
         {allAlerts.map((alert) => (
           <article className={`alert-card ${alert.severity.toLowerCase()}`} key={`${alert.petName}-${alert.title}`}>
-            <div className="alert-icon">!</div>
+            <div className="alert-icon">
+              <img alt="" src={alert.image} />
+            </div>
             <div>
               <div className="alert-title-row">
                 <h3>{alert.petName}: {alert.title}</h3>

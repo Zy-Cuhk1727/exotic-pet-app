@@ -25,7 +25,9 @@ function Dashboard({ activePetId, onSelectPet, pet, pets }) {
             onClick={() => onSelectPet(item.id)}
             type="button"
           >
-            <span>{item.icon}</span>
+            <span>
+              <img alt="" src={item.image} />
+            </span>
             <strong>{item.name}</strong>
             <small>{item.species}</small>
           </button>
@@ -43,7 +45,7 @@ function Dashboard({ activePetId, onSelectPet, pet, pets }) {
           </p>
         </div>
         <div className="cartoon-pet" aria-label={`${pet.species} profile`}>
-          <span>{pet.icon}</span>
+          <img alt={pet.species} src={pet.image} />
         </div>
       </section>
 

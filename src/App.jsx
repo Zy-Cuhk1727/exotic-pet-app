@@ -41,14 +41,14 @@ function App() {
             <h1>AI Reptile Care</h1>
           </div>
           <div className="pet-avatar" aria-hidden="true">
-            <span>{activePet.icon}</span>
+            <img alt="" src={activePet.image} />
           </div>
         </header>
 
         <aside className="web-sidebar" aria-label="Desktop navigation">
           <div className="brand-block">
             <div className="pet-avatar" aria-hidden="true">
-              <span>{activePet.icon}</span>
+              <img alt="" src={activePet.image} />
             </div>
             <div>
               <p className="eyebrow">ReptiMind</p>

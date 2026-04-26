@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import Alerts from "./pages/Alerts";
 import Camera from "./pages/Camera";
 import Chat from "./pages/Chat";
 import Dashboard from "./pages/Dashboard";
 import { reptilePets } from "./data/mockData";
+import { simulatePetTick } from "./data/liveSimulator";
 
 const tabs = [
   { id: "dashboard", label: "Home", icon: "⌂" },
@@ -15,19 +16,28 @@ const tabs = [
 
 function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [pets, setPets] = useState(reptilePets);
   const [activePetId, setActivePetId] = useState(reptilePets[0].id);
-  const activePet = reptilePets.find((pet) => pet.id === activePetId) || reptilePets[0];
+  const activePet = pets.find((pet) => pet.id === activePetId) || pets[0];
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setPets((currentPets) => simulatePetTick(currentPets));
+    }, 5000);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
 
   const renderPage = () => {
-    if (activeTab === "chat") return <Chat />;
+    if (activeTab === "chat") return <Chat activePet={activePet} pets={pets} />;
     if (activeTab === "camera") return <Camera pet={activePet} />;
-    if (activeTab === "alerts") return <Alerts pet={activePet} pets={reptilePets} />;
+    if (activeTab === "alerts") return <Alerts pet={activePet} pets={pets} />;
     return (
       <Dashboard
         activePetId={activePetId}
         onSelectPet={setActivePetId}
         pet={activePet}
-        pets={reptilePets}
+        pets={pets}
       />
     );
   };
@@ -73,7 +83,7 @@ function App() {
           <section className="desktop-status">
             <p className="section-label">System status</p>
             <strong>Prototype online</strong>
-            <span>{reptilePets.length} reptile profiles + AI chat ready</span>
+            <span>{pets.length} reptile profiles + live mock IoT data</span>
           </section>
         </aside>
 

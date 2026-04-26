@@ -14,6 +14,19 @@ function buildPoints(data, field) {
     .join(" ");
 }
 
+function getAxisTicks(data, field) {
+  const values = data.map((item) => item[field]);
+  const min = Math.floor(Math.min(...values) - 1);
+  const max = Math.ceil(Math.max(...values) + 1);
+  const middle = Math.round((min + max) / 2);
+
+  return [
+    { label: max, y: 10 },
+    { label: middle, y: 70 },
+    { label: min, y: 130 },
+  ];
+}
+
 function Dashboard({ activePetId, onSelectPet, pet, pets }) {
   return (
     <div className="page dashboard-page">
@@ -68,18 +81,25 @@ function Dashboard({ activePetId, onSelectPet, pet, pets }) {
             <p className="section-label">12-hour trend</p>
             <h3>Temperature & humidity</h3>
           </div>
-          <span className="pill">Mock IoT data</span>
+          <span className="pill">Live mock IoT</span>
         </div>
 
-        <svg className="chart" viewBox="0 0 300 150" role="img" aria-label="Temperature and humidity trend chart">
-          <line x1="0" y1="126" x2="300" y2="126" />
-          <line x1="0" y1="80" x2="300" y2="80" />
-          <line x1="0" y1="34" x2="300" y2="34" />
-          <polyline points={buildPoints(pet.trend, "humidity")} className="humidity-line" />
-          <polyline points={buildPoints(pet.trend, "temp")} className="temp-line" />
+        <svg className="chart" viewBox="0 0 340 150" role="img" aria-label="Temperature and humidity trend chart">
+          <line x1="34" y1="126" x2="334" y2="126" />
+          <line x1="34" y1="80" x2="334" y2="80" />
+          <line x1="34" y1="34" x2="334" y2="34" />
+          {getAxisTicks(pet.trend, "temp").map((tick) => (
+            <text className="axis-label" key={tick.y} x="26" y={tick.y}>
+              {tick.label}°C
+            </text>
+          ))}
+          <g transform="translate(34 0)">
+            <polyline points={buildPoints(pet.trend, "humidity")} className="humidity-line" />
+            <polyline points={buildPoints(pet.trend, "temp")} className="temp-line" />
+          </g>
           {pet.trend.map((item, index) => (
-            <text key={item.time} x={(index / (pet.trend.length - 1)) * 300} y="146">
-              {item.time.slice(0, 2)}
+            <text key={item.time} x={34 + (index / (pet.trend.length - 1)) * 300} y="146">
+              {item.time}
             </text>
           ))}
         </svg>

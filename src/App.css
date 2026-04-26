@@ -318,8 +318,13 @@ button {
 
 .chart text {
   fill: #879289;
-  font-size: 9px;
+  font-size: 8px;
   text-anchor: middle;
+}
+
+.chart .axis-label {
+  font-size: 8px;
+  text-anchor: end;
 }
 
 .legend {
@@ -405,6 +410,91 @@ button {
 
 .chat-intro h2 {
   font-size: 1.42rem;
+}
+
+.chat-history {
+  display: grid;
+  gap: 12px;
+}
+
+.history-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.history-heading button {
+  border: 0;
+  border-radius: 13px;
+  padding: 9px 12px;
+  background: #173d32;
+  color: #fff;
+  font-weight: 900;
+}
+
+.history-list {
+  display: grid;
+  gap: 8px;
+  max-height: 210px;
+  overflow: auto;
+}
+
+.history-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px;
+  align-items: stretch;
+}
+
+.history-item button {
+  min-width: 0;
+  border: 0;
+  border-radius: 14px;
+  background: #f2f8ee;
+  color: #24483e;
+  text-align: left;
+}
+
+.history-item button:first-child {
+  padding: 10px 11px;
+}
+
+.history-item button:last-child {
+  width: 36px;
+  display: grid;
+  place-items: center;
+  color: #8b3c25;
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+
+.history-item strong,
+.history-item span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.history-item strong {
+  font-size: 0.84rem;
+}
+
+.history-item span {
+  margin-top: 3px;
+  color: #75847c;
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.history-item.active button:first-child {
+  background: #173d32;
+  color: #fff;
+}
+
+.history-item.active span {
+  color: #cce4dc;
 }
 
 .quick-prompts {
@@ -940,14 +1030,25 @@ button {
 
   .chat-page {
     max-width: 980px;
-    grid-template-columns: minmax(0, 1fr) 280px;
+    grid-template-columns: 220px minmax(0, 1fr) 280px;
     align-items: start;
+  }
+
+  .chat-history {
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    position: sticky;
+    top: 0;
+  }
+
+  .history-list {
+    max-height: 540px;
   }
 
   .chat-intro,
   .quick-prompts,
   .chat-form {
-    grid-column: 2;
+    grid-column: 3;
   }
 
   .chat-intro {
@@ -965,7 +1066,7 @@ button {
   }
 
   .chat-window {
-    grid-column: 1;
+    grid-column: 2;
     grid-row: 1 / span 3;
     min-height: 600px;
   }

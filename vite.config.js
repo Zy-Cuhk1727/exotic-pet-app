@@ -5,6 +5,9 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: true,
-    allowedHosts: ['preheated-astonish-tinker.ngrok-free.dev']
+    allowedHosts: ['preheated-astonish-tinker.ngrok-free.dev'],
+    proxy: {
+      '/api': 'http://127.0.0.1:3001'
+    }
   }
 })

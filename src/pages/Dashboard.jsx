@@ -129,6 +129,21 @@ function Dashboard({ activePetId, onSelectPet, onAddPet, onEditPet, onDeletePet,
   const activePetIsCustom = customPets.some((item) => item.id === activePetId);
   const selectedCustomPet = customPets.find((item) => item.id === activePetId);
   const canEditActivePet = !mockPetIds.includes(pet.id);
+  const allAlerts = pets.flatMap((item) =>
+    item.alerts.map((alert) => ({
+      ...alert,
+      petName: item.name,
+      image: item.image,
+      species: item.species,
+    })),
+  );
+  const activeAlertCount = pet.alerts.length;
+  const feedingReminder = pet.species.toLowerCase().includes("python")
+    ? "Next feeding reminder: this weekend"
+    : pet.species.toLowerCase().includes("frog")
+    ? "Next feeding reminder: tomorrow evening"
+    : "Next feeding reminder: tomorrow morning";
+  const lightSchedule = "Light schedule: 08:00-20:00";
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [editingPetId, setEditingPetId] = useState("");
   const [newPet, setNewPet] = useState(emptyPetForm);
@@ -224,6 +239,95 @@ function Dashboard({ activePetId, onSelectPet, onAddPet, onEditPet, onDeletePet,
 
   return (
     <div className="page dashboard-page">
+      <section className="home-command-center" aria-label="Home pet overview">
+        <aside className="pet-dialog-sidebar">
+          <div className="home-section-head">
+            <div>
+              <p className="section-label">Pets</p>
+              <h2>My reptiles</h2>
+            </div>
+            {allAlerts.length > 0 && <span className="alert-dot-badge">{allAlerts.length}</span>}
+          </div>
+
+          <div className="pet-dialog-list">
+            {pets.map((item) => (
+              <button
+                className={item.id === activePetId ? "pet-dialog-item active" : "pet-dialog-item"}
+                key={item.id}
+                onClick={() => onSelectPet(item.id)}
+                type="button"
+              >
+                <span className="pet-dialog-photo">
+                  <img alt="" src={item.image} />
+                  {item.alerts.length > 0 && <em />}
+                </span>
+                <span>
+                  <strong>{item.name}</strong>
+                  <small>{item.species}</small>
+                </span>
+                <i className={`condition-dot ${item.condition.tone}`}>{item.condition.label}</i>
+              </button>
+            ))}
+          </div>
+
+          <button className="pet-add-card compact-add" onClick={openAddPet} type="button">
+            <span>+</span>
+            <strong>Add pet</strong>
+            <small>Profile and sensor targets</small>
+          </button>
+        </aside>
+
+        <article className="home-status-panel">
+          <div className="status-top-row">
+            <div>
+              <p className="section-label">Current status</p>
+              <h2>{pet.name}</h2>
+              <p className="muted">{pet.species} - {pet.habitat}</p>
+            </div>
+            <div className="status-avatar-wrap">
+              {activeAlertCount > 0 && <span className="alert-dot-badge">{activeAlertCount}</span>}
+              <img alt={pet.species} src={pet.image} />
+            </div>
+          </div>
+
+          <div className={`condition-banner ${pet.condition.tone}`}>
+            <strong>{pet.condition.label}</strong>
+            <span>{pet.condition.detail}</span>
+          </div>
+
+          <div className="home-mini-metrics">
+            {pet.metrics.slice(0, 3).map((metric) => (
+              <article key={metric.label}>
+                <span>{metric.label}</span>
+                <strong>{metric.value}<small>{getDisplayUnit(metric.unit)}</small></strong>
+              </article>
+            ))}
+          </div>
+
+          <div className="home-care-row">
+            <article>
+              <span>Feeding</span>
+              <strong>{feedingReminder}</strong>
+            </article>
+            <article>
+              <span>Lighting</span>
+              <strong>{lightSchedule}</strong>
+            </article>
+          </div>
+
+          <div className="pet-action-buttons inline-actions">
+            {canEditActivePet && (
+              <button className="edit-pet-button" onClick={openEditPet} type="button">
+                Edit
+              </button>
+            )}
+            <button className="delete-pet-button" disabled={pets.length <= 1 || isDeletingPet} onClick={deleteActivePet} type="button">
+              {isDeletingPet ? "Deleting..." : "Delete"}
+            </button>
+          </div>
+        </article>
+      </section>
+
       <section className="pet-switcher" aria-label="Reptile profiles">
         {builtInPets.map((item) => (
           <button
@@ -395,6 +499,35 @@ function Dashboard({ activePetId, onSelectPet, onAddPet, onEditPet, onDeletePet,
             <span>{metric.status}</span>
           </article>
         ))}
+      </section>
+
+      <section className="panel home-alerts-panel">
+        <div className="panel-heading">
+          <div>
+            <p className="section-label">Recent alerts</p>
+            <h3>{allAlerts.length} unread item{allAlerts.length === 1 ? "" : "s"}</h3>
+          </div>
+          {allAlerts.length > 0 && <span className="alert-dot-badge">{allAlerts.length}</span>}
+        </div>
+        <div className="home-alert-list">
+          {(allAlerts.length > 0 ? allAlerts.slice(0, 3) : [{
+            petName: pet.name,
+            title: "No active alerts",
+            message: "All monitored readings are stable in this demo.",
+            severity: "Low",
+            time: "Now",
+            image: pet.image,
+          }]).map((alert) => (
+            <article className={`home-alert-row ${alert.severity.toLowerCase()}`} key={`${alert.petName}-${alert.title}`}>
+              <img alt="" src={alert.image} />
+              <div>
+                <strong>{alert.petName}: {alert.title}</strong>
+                <span>{alert.message}</span>
+              </div>
+              <em>{alert.time}</em>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section className="panel">

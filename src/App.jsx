@@ -1,18 +1,74 @@
 ﻿import { useEffect, useState } from "react";
 import "./App.css";
-import Alerts from "./pages/Alerts";
-import Camera from "./pages/Camera";
+import FloatingAssistant from "./components/FloatingAssistant";
 import Chat from "./pages/Chat";
+import Community from "./pages/Community";
 import Dashboard from "./pages/Dashboard";
+import Devices from "./pages/Devices";
+import Premium from "./pages/Premium";
+import Profile from "./pages/Profile";
+import Shop from "./pages/Shop";
 import { reptilePets } from "./data/mockData";
 import { clearInitialTrend, simulatePetTick } from "./data/liveSimulator";
 
-const tabs = [
-  { id: "dashboard", label: "Home", icon: "H" },
-  { id: "chat", label: "AI Chat", icon: "AI" },
-  { id: "camera", label: "Camera", icon: "C" },
-  { id: "alerts", label: "Alerts", icon: "!" },
+const routes = [
+  { path: "/", label: "Home", icon: "H" },
+  { path: "/devices", label: "Devices", icon: "D" },
+  { path: "/community", label: "Community", icon: "CO" },
+  { path: "/shop", label: "Shop", icon: "S" },
+  { path: "/user", label: "Me", icon: "U" },
 ];
+
+const pagePaths = [
+  ...routes.map((route) => route.path),
+  "/chat",
+  "/premium",
+];
+
+const routeAliases = {
+  "/me": "/user",
+  "/profile": "/user",
+  "/notifications": "/",
+  "/alerts": "/",
+  "/care": "/devices",
+  "/camera": "/devices",
+  "/subscription": "/premium",
+  "/subscriptions": "/premium",
+};
+
+function normalizePathname(pathname) {
+  const cleanPath = pathname.length > 1 ? pathname.replace(/\/+$/, "") : pathname;
+  const aliasedPath = routeAliases[cleanPath] || cleanPath;
+  return pagePaths.includes(aliasedPath) ? aliasedPath : "/";
+}
+
+function usePathRouter() {
+  const [pathname, setPathname] = useState(() => normalizePathname(window.location.pathname));
+
+  useEffect(() => {
+    const syncPath = () => {
+      const normalizedPath = normalizePathname(window.location.pathname);
+      if (window.location.pathname !== normalizedPath) {
+        window.history.replaceState({}, "", normalizedPath);
+      }
+      setPathname(normalizedPath);
+    };
+
+    syncPath();
+    window.addEventListener("popstate", syncPath);
+    return () => window.removeEventListener("popstate", syncPath);
+  }, []);
+
+  const navigate = (path) => {
+    const normalizedPath = normalizePathname(path);
+    if (window.location.pathname !== normalizedPath) {
+      window.history.pushState({}, "", normalizedPath);
+    }
+    setPathname(normalizedPath);
+  };
+
+  return [pathname, navigate];
+}
 
 const CUSTOM_PETS_STORAGE_KEY = "reptimind-custom-pets";
 const DELETED_PETS_STORAGE_KEY = "reptimind-deleted-pets";
@@ -178,7 +234,7 @@ async function saveDeletedBuiltInPet(id) {
 }
 
 function App() {
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [pathname, navigate] = usePathRouter();
   const [pets, setPets] = useState(() => clearInitialTrend(reptilePets));
   const [activePetId, setActivePetId] = useState(reptilePets[0].id);
   const activePet = pets.find((pet) => pet.id === activePetId) || pets[0];
@@ -313,9 +369,21 @@ function App() {
   }, []);
 
   const renderPage = () => {
-    if (activeTab === "chat") return <Chat activePet={activePet} pets={pets} />;
-    if (activeTab === "camera") return <Camera pet={activePet} />;
-    if (activeTab === "alerts") return <Alerts pet={activePet} pets={pets} />;
+    if (pathname === "/chat") return <Chat activePet={activePet} pets={pets} />;
+    if (pathname === "/devices") return <Devices pet={activePet} />;
+    if (pathname === "/community") return <Community pets={pets} />;
+    if (pathname === "/shop") return <Shop />;
+    if (pathname === "/premium") return <Premium />;
+    if (pathname === "/user") {
+      return (
+        <Profile
+          activePetId={activePetId}
+          onNavigate={navigate}
+          onSelectPet={setActivePetId}
+          pets={pets}
+        />
+      );
+    }
     return (
       <Dashboard
         activePetId={activePetId}
@@ -355,15 +423,15 @@ function App() {
           </div>
 
           <nav className="side-nav">
-            {tabs.map((tab) => (
+            {routes.map((route) => (
               <button
-                className={activeTab === tab.id ? "side-nav-item active" : "side-nav-item"}
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                className={pathname === route.path ? "side-nav-item active" : "side-nav-item"}
+                key={route.path}
+                onClick={() => navigate(route.path)}
                 type="button"
               >
-                <span className="nav-icon">{tab.icon}</span>
-                <span>{tab.label}</span>
+                <span className="nav-icon">{route.icon}</span>
+                <span>{route.label}</span>
               </button>
             ))}
           </nav>
@@ -378,18 +446,20 @@ function App() {
         <section className="screen">{renderPage()}</section>
 
         <nav className="bottom-nav" aria-label="Main navigation">
-          {tabs.map((tab) => (
+          {routes.map((route) => (
             <button
-              className={activeTab === tab.id ? "nav-item active" : "nav-item"}
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              className={pathname === route.path ? "nav-item active" : "nav-item"}
+              key={route.path}
+              onClick={() => navigate(route.path)}
               type="button"
             >
-              <span className="nav-icon">{tab.icon}</span>
-              <span>{tab.label}</span>
+              <span className="nav-icon">{route.icon}</span>
+              <span>{route.label}</span>
             </button>
           ))}
         </nav>
+
+        <FloatingAssistant activePet={activePet} pets={pets} />
       </main>
     </div>
   );

@@ -8,7 +8,7 @@ const initialDevices = [
 
 const helpItems = ["FAQ", "Contact support", "Setup tutorial", "Care emergency checklist"];
 
-function Profile({ activePetId, onNavigate, onSelectPet, pets }) {
+function Profile({ activePetId, notificationCount = 0, onNavigate, onSelectPet, pets }) {
   const [selectedPetId, setSelectedPetId] = useState(activePetId);
   const [devices, setDevices] = useState(initialDevices);
   const [preferences, setPreferences] = useState({
@@ -61,7 +61,7 @@ function Profile({ activePetId, onNavigate, onSelectPet, pets }) {
         <img alt="" src={selectedPet?.image || "/pets/bearded-dragon.webp"} />
         <div>
           <p className="section-label">My account</p>
-          <h2>Alex Chen</h2>
+          <h2>Volkan</h2>
           <p className="muted">Reptile Guardian member - Premium trial</p>
         </div>
         <span className="member-chip">Level 4</span>
@@ -147,6 +147,28 @@ function Profile({ activePetId, onNavigate, onSelectPet, pets }) {
             <p className="muted">Phone alert demo, multi-pet monitoring, and AI history enabled.</p>
           </div>
           <button className="ghost-button" onClick={() => onNavigate("/premium")} type="button">Manage</button>
+        </div>
+      </section>
+
+      <section className="panel profile-section">
+        <p className="section-label">AI history</p>
+        <div className="current-plan-row">
+          <div>
+            <h3>Chat records</h3>
+            <p className="muted">Review saved ReptiBuddy and full AI assistant conversations.</p>
+          </div>
+          <button className="ghost-button" onClick={() => onNavigate("/chat")} type="button">Open</button>
+        </div>
+      </section>
+
+      <section className="panel profile-section">
+        <p className="section-label">Notifications</p>
+        <div className="current-plan-row">
+          <div>
+            <h3>{notificationCount} unread</h3>
+            <p className="muted">Unread environment and care alerts are shown on the Home page.</p>
+          </div>
+          <button className="ghost-button" onClick={() => onNavigate("/")} type="button">View</button>
         </div>
       </section>
 

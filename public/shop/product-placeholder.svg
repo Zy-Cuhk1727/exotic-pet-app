@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="700" viewBox="0 0 900 700" role="img" aria-label="Product image pending">
+  <rect width="900" height="700" fill="#f2f8ee"/>
+  <rect x="70" y="70" width="760" height="560" rx="36" fill="#ffffff" stroke="#cbd9c8" stroke-width="6" stroke-dasharray="20 18"/>
+  <circle cx="450" cy="280" r="78" fill="#dff4d5"/>
+  <path d="M370 385c54-64 107-64 160 0 19 23 8 58-22 58H392c-30 0-41-35-22-58z" fill="#173d32"/>
+  <text x="450" y="515" text-anchor="middle" font-family="Arial, sans-serif" font-size="38" font-weight="800" fill="#6d7a72">Image coming soon</text>
+</svg>

@@ -1,5 +1,6 @@
 ﻿import { useEffect, useState } from "react";
 import "./App.css";
+import { useRef } from "react";
 import FloatingAssistant from "./components/FloatingAssistant";
 import Chat from "./pages/Chat";
 import Community from "./pages/Community";
@@ -14,7 +15,7 @@ import { clearInitialTrend, simulatePetTick } from "./data/liveSimulator";
 const routes = [
   { path: "/", label: "Home", icon: "H" },
   { path: "/devices", label: "Devices", icon: "D" },
-  { path: "/community", label: "Community", icon: "CO" },
+  { path: "/community", label: "Community", shortLabel: "Social", icon: "CO" },
   { path: "/shop", label: "Shop", icon: "S" },
   { path: "/user", label: "Me", icon: "U" },
 ];
@@ -72,6 +73,8 @@ function usePathRouter() {
 
 const CUSTOM_PETS_STORAGE_KEY = "reptimind-custom-pets";
 const DELETED_PETS_STORAGE_KEY = "reptimind-deleted-pets";
+const ALERTS_STORAGE_KEY = "reptimind-alert-inbox";
+const MAX_ALERTS = 30;
 
 function readLocalArray(key) {
   try {
@@ -233,10 +236,155 @@ async function saveDeletedBuiltInPet(id) {
   writeLocalArray(DELETED_PETS_STORAGE_KEY, [...new Set([...readLocalArray(DELETED_PETS_STORAGE_KEY), id])]);
 }
 
+function normalizeAlertSeverity(severity) {
+  if (severity === "Critical" || severity === "High" || severity === "Medium" || severity === "Low") {
+    return severity;
+  }
+
+  return "Medium";
+}
+
+function createAlertRecord({ pet, title, message, severity = "Medium", source = "Monitor", read = false }) {
+  return {
+    id: `alert-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    petId: pet.id,
+    petName: pet.name,
+    species: pet.species,
+    image: pet.image,
+    title,
+    message,
+    severity: normalizeAlertSeverity(severity),
+    source,
+    time: "Just now",
+    createdAt: new Date().toISOString(),
+    read,
+  };
+}
+
+function buildSeedAlerts(pets) {
+  return pets
+    .flatMap((pet) =>
+      pet.alerts.map((alert) =>
+        createAlertRecord({
+          pet,
+          title: alert.title,
+          message: alert.message,
+          severity: alert.severity,
+          source: "Seed alert",
+          read: false,
+        }),
+      ),
+    )
+    .slice(0, MAX_ALERTS);
+}
+
+function getMetricNumber(pet, labels) {
+  const metric = pet.metrics.find((item) => labels.includes(item.label));
+  const value = Number.parseFloat(String(metric?.value || "").replace(/[^\d.-]/g, ""));
+  return Number.isFinite(value) ? value : null;
+}
+
+function generateEnvironmentAlert(pets) {
+  if (pets.length === 0) return null;
+
+  const pet = pets[Math.floor(Math.random() * pets.length)];
+  const temp = getMetricNumber(pet, ["Temperature", "Warm side"]);
+  const humidity = getMetricNumber(pet, ["Humidity"]);
+  const uvb = getMetricNumber(pet, ["UVB"]);
+  const activity = Number(pet.activity || 0);
+  const rules = [];
+
+  if (temp !== null && temp >= 32) {
+    rules.push({
+      title: "Warm zone rising",
+      message: `${pet.name}'s warm area is ${temp.toFixed(1)}°C. Check basking lamp output and ventilation.`,
+      severity: temp >= 34 ? "High" : "Medium",
+      source: "Temperature sensor",
+    });
+  }
+
+  if (temp !== null && temp <= 24) {
+    rules.push({
+      title: "Temperature below target",
+      message: `${pet.name}'s enclosure is cooler than expected. Verify heat lamp and night heat settings.`,
+      severity: "Medium",
+      source: "Temperature sensor",
+    });
+  }
+
+  if (humidity !== null && humidity <= 45) {
+    rules.push({
+      title: "Humidity low",
+      message: `${pet.name}'s humidity dropped to ${Math.round(humidity)}%. Review misting schedule or moist hide.`,
+      severity: "Medium",
+      source: "Humidity sensor",
+    });
+  }
+
+  if (humidity !== null && humidity >= 80) {
+    rules.push({
+      title: "Humidity high",
+      message: `${pet.name}'s humidity is ${Math.round(humidity)}%. Check ventilation and substrate moisture.`,
+      severity: "Low",
+      source: "Humidity sensor",
+    });
+  }
+
+  if (uvb !== null && uvb < 3.5) {
+    rules.push({
+      title: "UVB level needs review",
+      message: `${pet.name}'s UVB reading is ${uvb.toFixed(1)} UVI. Confirm lamp distance and schedule.`,
+      severity: "Low",
+      source: "UVB monitor",
+    });
+  }
+
+  if (activity <= 35) {
+    rules.push({
+      title: "Activity lower than usual",
+      message: `${pet.name}'s movement score is ${activity}%. Check recent feeding, shedding, and hide use.`,
+      severity: "Medium",
+      source: "Camera AI",
+    });
+  }
+
+  if (pet.condition?.label === "Missing" || pet.condition?.label === "Injured") {
+    rules.push({
+      title: `${pet.condition.label} status still active`,
+      message: pet.condition.detail,
+      severity: pet.condition.label === "Missing" ? "Critical" : "High",
+      source: "Condition monitor",
+    });
+  }
+
+  const fallbackRules = [
+    {
+      title: "Feeding reminder",
+      message: `${pet.name}'s next feeding reminder is coming up. Confirm appetite before feeding.`,
+      severity: "Low",
+      source: "Care schedule",
+    },
+    {
+      title: "Light schedule check",
+      message: `${pet.name}'s day/night light cycle should be reviewed for today's setup.`,
+      severity: "Low",
+      source: "Light schedule",
+    },
+  ];
+
+  const selectedRule = (rules.length ? rules : fallbackRules)[
+    Math.floor(Math.random() * (rules.length ? rules.length : fallbackRules.length))
+  ];
+
+  return createAlertRecord({ pet, ...selectedRule });
+}
+
 function App() {
   const [pathname, navigate] = usePathRouter();
   const [pets, setPets] = useState(() => clearInitialTrend(reptilePets));
   const [activePetId, setActivePetId] = useState(reptilePets[0].id);
+  const [notifications, setNotifications] = useState(() => readLocalArray(ALERTS_STORAGE_KEY));
+  const petsRef = useRef(pets);
   const activePet = pets.find((pet) => pet.id === activePetId) || pets[0];
   const mockPetIds = reptilePets.map((pet) => pet.id);
 
@@ -246,7 +394,9 @@ function App() {
     Promise.all([fetchCustomPets(), fetchDeletedPetIds()]).then(([customPets, deletedPetIds]) => {
       if (!isMounted) return;
       const builtInPets = reptilePets.filter((pet) => !deletedPetIds.includes(pet.id));
-      setPets(clearInitialTrend([...builtInPets, ...customPets]));
+      const nextPets = clearInitialTrend([...builtInPets, ...customPets]);
+      setPets(nextPets);
+      setNotifications((currentAlerts) => (currentAlerts.length > 0 ? currentAlerts : buildSeedAlerts(nextPets)));
     });
 
     return () => {
@@ -326,6 +476,9 @@ function App() {
 
     const savedPet = await saveCustomPet(nextPet);
     setPets((currentPets) => [...currentPets, savedPet]);
+    if (savedPet.alerts.length > 0) {
+      setNotifications((currentAlerts) => [...buildSeedAlerts([savedPet]), ...currentAlerts].slice(0, MAX_ALERTS));
+    }
     setActivePetId(savedPet.id);
   };
 
@@ -368,6 +521,39 @@ function App() {
     return () => window.clearInterval(intervalId);
   }, []);
 
+  useEffect(() => {
+    petsRef.current = pets;
+  }, [pets]);
+
+  useEffect(() => {
+    writeLocalArray(ALERTS_STORAGE_KEY, notifications);
+  }, [notifications]);
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      const nextAlert = generateEnvironmentAlert(petsRef.current);
+      if (!nextAlert) return;
+
+      setNotifications((currentAlerts) => [nextAlert, ...currentAlerts].slice(0, MAX_ALERTS));
+    }, 16000);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
+
+  const markNotificationRead = (id) => {
+    setNotifications((currentAlerts) =>
+      currentAlerts.map((alert) => (alert.id === id ? { ...alert, read: true } : alert)),
+    );
+  };
+
+  const markAllNotificationsRead = () => {
+    setNotifications((currentAlerts) => currentAlerts.map((alert) => ({ ...alert, read: true })));
+  };
+
+  const deleteNotification = (id) => {
+    setNotifications((currentAlerts) => currentAlerts.filter((alert) => alert.id !== id));
+  };
+
   const renderPage = () => {
     if (pathname === "/chat") return <Chat activePet={activePet} pets={pets} />;
     if (pathname === "/devices") return <Devices pet={activePet} />;
@@ -378,6 +564,7 @@ function App() {
       return (
         <Profile
           activePetId={activePetId}
+          notificationCount={notifications.filter((alert) => !alert.read).length}
           onNavigate={navigate}
           onSelectPet={setActivePetId}
           pets={pets}
@@ -394,6 +581,10 @@ function App() {
         pet={activePet}
         pets={pets}
         mockPetIds={mockPetIds}
+        notifications={notifications}
+        onDeleteNotification={deleteNotification}
+        onMarkAllNotificationsRead={markAllNotificationsRead}
+        onMarkNotificationRead={markNotificationRead}
       />
     );
   };
@@ -454,12 +645,17 @@ function App() {
               type="button"
             >
               <span className="nav-icon">{route.icon}</span>
-              <span>{route.label}</span>
+              <span>{route.shortLabel || route.label}</span>
             </button>
           ))}
         </nav>
 
-        <FloatingAssistant activePet={activePet} pets={pets} />
+        <FloatingAssistant
+          activePet={activePet}
+          notifications={notifications}
+          onNavigate={navigate}
+          pets={pets}
+        />
       </main>
     </div>
   );

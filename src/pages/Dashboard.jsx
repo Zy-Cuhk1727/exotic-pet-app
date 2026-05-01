@@ -122,22 +122,29 @@ function getDisplayUnit(unit) {
   return unit === "掳C" || unit === "C" ? "°C" : unit;
 }
 
-function Dashboard({ activePetId, onSelectPet, onAddPet, onEditPet, onDeletePet, pet, pets, mockPetIds = [] }) {
+function Dashboard({
+  activePetId,
+  onSelectPet,
+  onAddPet,
+  onEditPet,
+  onDeletePet,
+  pet,
+  pets,
+  mockPetIds = [],
+  notifications = [],
+  onDeleteNotification,
+  onMarkAllNotificationsRead,
+  onMarkNotificationRead,
+}) {
   const hasTrendData = pet.trend.length >= 2;
   const builtInPets = pets.filter((item) => mockPetIds.includes(item.id));
   const customPets = pets.filter((item) => !mockPetIds.includes(item.id));
   const activePetIsCustom = customPets.some((item) => item.id === activePetId);
   const selectedCustomPet = customPets.find((item) => item.id === activePetId);
   const canEditActivePet = !mockPetIds.includes(pet.id);
-  const allAlerts = pets.flatMap((item) =>
-    item.alerts.map((alert) => ({
-      ...alert,
-      petName: item.name,
-      image: item.image,
-      species: item.species,
-    })),
-  );
-  const activeAlertCount = pet.alerts.length;
+  const allAlerts = notifications;
+  const unreadAlertCount = allAlerts.filter((alert) => !alert.read).length;
+  const activeAlertCount = allAlerts.filter((alert) => alert.petId === pet.id && !alert.read).length;
   const feedingReminder = pet.species.toLowerCase().includes("python")
     ? "Next feeding reminder: this weekend"
     : pet.species.toLowerCase().includes("frog")
@@ -246,7 +253,7 @@ function Dashboard({ activePetId, onSelectPet, onAddPet, onEditPet, onDeletePet,
               <p className="section-label">Pets</p>
               <h2>My reptiles</h2>
             </div>
-            {allAlerts.length > 0 && <span className="alert-dot-badge">{allAlerts.length}</span>}
+            {unreadAlertCount > 0 && <span className="alert-dot-badge">{unreadAlertCount}</span>}
           </div>
 
           <div className="pet-dialog-list">
@@ -259,7 +266,7 @@ function Dashboard({ activePetId, onSelectPet, onAddPet, onEditPet, onDeletePet,
               >
                 <span className="pet-dialog-photo">
                   <img alt="" src={item.image} />
-                  {item.alerts.length > 0 && <em />}
+                  {allAlerts.some((alert) => alert.petId === item.id && !alert.read) && <em />}
                 </span>
                 <span>
                   <strong>{item.name}</strong>
@@ -505,26 +512,48 @@ function Dashboard({ activePetId, onSelectPet, onAddPet, onEditPet, onDeletePet,
         <div className="panel-heading">
           <div>
             <p className="section-label">Recent alerts</p>
-            <h3>{allAlerts.length} unread item{allAlerts.length === 1 ? "" : "s"}</h3>
+            <h3>{unreadAlertCount} unread / {allAlerts.length} total</h3>
           </div>
-          {allAlerts.length > 0 && <span className="alert-dot-badge">{allAlerts.length}</span>}
+          <div className="alert-panel-actions">
+            {unreadAlertCount > 0 && <span className="alert-dot-badge">{unreadAlertCount}</span>}
+            {allAlerts.length > 0 && (
+              <button className="ghost-button" onClick={onMarkAllNotificationsRead} type="button">
+                Mark all read
+              </button>
+            )}
+          </div>
         </div>
         <div className="home-alert-list">
-          {(allAlerts.length > 0 ? allAlerts.slice(0, 3) : [{
+          {(allAlerts.length > 0 ? allAlerts.slice(0, 6) : [{
+            id: "no-alerts",
             petName: pet.name,
+            petId: pet.id,
             title: "No active alerts",
             message: "All monitored readings are stable in this demo.",
             severity: "Low",
             time: "Now",
             image: pet.image,
+            read: true,
           }]).map((alert) => (
-            <article className={`home-alert-row ${alert.severity.toLowerCase()}`} key={`${alert.petName}-${alert.title}`}>
+            <article className={`home-alert-row ${alert.severity.toLowerCase()} ${alert.read ? "read" : "unread"}`} key={alert.id}>
               <img alt="" src={alert.image} />
               <div>
                 <strong>{alert.petName}: {alert.title}</strong>
                 <span>{alert.message}</span>
               </div>
-              <em>{alert.time}</em>
+              <em>{alert.read ? "Read" : alert.time}</em>
+              {alert.id !== "no-alerts" && (
+                <div className="home-alert-actions">
+                  {!alert.read && (
+                    <button onClick={() => onMarkNotificationRead(alert.id)} type="button">
+                      Read
+                    </button>
+                  )}
+                  <button onClick={() => onDeleteNotification(alert.id)} type="button">
+                    Delete
+                  </button>
+                </div>
+              )}
             </article>
           ))}
         </div>
@@ -588,7 +617,7 @@ function Dashboard({ activePetId, onSelectPet, onAddPet, onEditPet, onDeletePet,
         <h3>{pet.species}</h3>
         <p>{pet.habitat}</p>
         <p>{pet.condition.detail}</p>
-        <strong>{pet.alerts.length} active alert{pet.alerts.length === 1 ? "" : "s"}</strong>
+        <strong>{activeAlertCount} unread alert{activeAlertCount === 1 ? "" : "s"}</strong>
       </section>
     </div>
   );

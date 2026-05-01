@@ -53,10 +53,35 @@ async function callAiApi(messages, appContext) {
   return data.answer || "I could not read the AI response.";
 }
 
-function FloatingAssistant({ activePet, pets }) {
+async function saveFloatingSession(sessionId, messages, activePet) {
+  const firstUserMessage = messages.find((message) => message.role === "user")?.content;
+  const now = new Date().toISOString();
+
+  try {
+    await fetch("/api/sessions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        session: {
+          id: sessionId,
+          title: firstUserMessage ? `Floating: ${firstUserMessage.slice(0, 48)}` : `Floating chat with ${activePet.name}`,
+          assistantAvatarId: "frog",
+          createdAt: now,
+          updatedAt: now,
+          messages,
+        },
+      }),
+    });
+  } catch {
+    // The floating chat still works when the demo backend is not running.
+  }
+}
+
+function FloatingAssistant({ activePet, notifications = [], onNavigate, pets }) {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [sessionId] = useState(() => `floating-${Date.now()}`);
   const [messages, setMessages] = useState([
     {
       role: "assistant",
@@ -64,8 +89,8 @@ function FloatingAssistant({ activePet, pets }) {
     },
   ]);
   const unreadCount = useMemo(
-    () => pets.reduce((total, pet) => total + pet.alerts.length, 0),
-    [pets],
+    () => notifications.filter((alert) => !alert.read).length,
+    [notifications],
   );
 
   const sendMessage = async (event) => {
@@ -75,14 +100,19 @@ function FloatingAssistant({ activePet, pets }) {
 
     const nextMessages = [...messages, { role: "user", content }];
     setMessages(nextMessages);
+    saveFloatingSession(sessionId, nextMessages, activePet);
     setInput("");
     setIsLoading(true);
 
     try {
       const answer = await callAiApi(nextMessages.slice(-8), buildAppContext(activePet, pets));
-      setMessages([...nextMessages, { role: "assistant", content: answer }]);
+      const answeredMessages = [...nextMessages, { role: "assistant", content: answer }];
+      setMessages(answeredMessages);
+      saveFloatingSession(sessionId, answeredMessages, activePet);
     } catch {
-      setMessages([...nextMessages, { role: "assistant", content: localReptiMindAnswer(content, activePet) }]);
+      const answeredMessages = [...nextMessages, { role: "assistant", content: localReptiMindAnswer(content, activePet) }];
+      setMessages(answeredMessages);
+      saveFloatingSession(sessionId, answeredMessages, activePet);
     } finally {
       setIsLoading(false);
     }
@@ -100,7 +130,10 @@ function FloatingAssistant({ activePet, pets }) {
               <p className="section-label">AI assistant</p>
               <h3>ReptiBuddy</h3>
             </div>
-            <button onClick={() => setIsOpen(false)} type="button">Close</button>
+            <div className="assistant-header-actions">
+              <button onClick={() => onNavigate?.("/chat")} type="button">History</button>
+              <button onClick={() => setIsOpen(false)} type="button">Close</button>
+            </div>
           </div>
 
           <div className="assistant-mini-chat" aria-live="polite">

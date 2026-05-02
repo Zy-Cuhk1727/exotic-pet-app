@@ -84,7 +84,9 @@ function FloatingAssistant({ activePet, notifications = [], onNavigate, pets }) 
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [panelPosition, setPanelPosition] = useState(null);
+  const [launcherPosition, setLauncherPosition] = useState(null);
   const dragRef = useRef(null);
+  const launcherDragRef = useRef(null);
   const [sessionId] = useState(() => `floating-${Date.now()}`);
   const [messages, setMessages] = useState([
     {
@@ -173,6 +175,51 @@ function FloatingAssistant({ activePet, notifications = [], onNavigate, pets }) 
     event.currentTarget.releasePointerCapture?.(event.pointerId);
   };
 
+  const startLauncherDrag = (event) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    launcherDragRef.current = {
+      moved: false,
+      offsetX: event.clientX - rect.left,
+      offsetY: event.clientY - rect.top,
+      width: rect.width,
+      height: rect.height,
+      startX: event.clientX,
+      startY: event.clientY,
+    };
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+  };
+
+  const dragLauncher = (event) => {
+    if (!launcherDragRef.current) return;
+
+    const margin = 10;
+    const dragState = launcherDragRef.current;
+    if (Math.abs(event.clientX - dragState.startX) > 4 || Math.abs(event.clientY - dragState.startY) > 4) {
+      dragState.moved = true;
+    }
+
+    const maxX = window.innerWidth - dragState.width - margin;
+    const maxY = window.innerHeight - dragState.height - margin;
+    setLauncherPosition({
+      x: Math.min(Math.max(margin, event.clientX - dragState.offsetX), maxX),
+      y: Math.min(Math.max(margin, event.clientY - dragState.offsetY), maxY),
+    });
+  };
+
+  const stopLauncherDrag = (event) => {
+    event.currentTarget.releasePointerCapture?.(event.pointerId);
+  };
+
+  const toggleAssistant = () => {
+    if (launcherDragRef.current?.moved) {
+      launcherDragRef.current = null;
+      return;
+    }
+
+    launcherDragRef.current = null;
+    setIsOpen((current) => !current);
+  };
+
   return (
     <div className={isOpen ? "floating-assistant open" : "floating-assistant"}>
       {isOpen && (
@@ -231,7 +278,17 @@ function FloatingAssistant({ activePet, notifications = [], onNavigate, pets }) 
         </section>
       )}
 
-      <button className="assistant-launcher" onClick={() => setIsOpen((current) => !current)} type="button" aria-label="Open AI assistant">
+      <button
+        className={launcherPosition ? "assistant-launcher dragged" : "assistant-launcher"}
+        style={launcherPosition ? { left: launcherPosition.x, top: launcherPosition.y } : undefined}
+        onClick={toggleAssistant}
+        onPointerDown={startLauncherDrag}
+        onPointerMove={dragLauncher}
+        onPointerUp={stopLauncherDrag}
+        onPointerCancel={stopLauncherDrag}
+        type="button"
+        aria-label="Open AI assistant"
+      >
         <span className="assistant-avatar cute" aria-hidden="true">
           <span />
         </span>

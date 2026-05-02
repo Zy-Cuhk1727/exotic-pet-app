@@ -58,7 +58,7 @@ function Profile({ activePetId, notificationCount = 0, onNavigate, onSelectPet, 
   return (
     <div className="page profile-page">
       <section className="panel user-profile-card">
-        <img alt="" src="/Vulkan.png" />
+        <img alt="" src="/avatars/Vulkan.jpg" />
         <div>
           <p className="section-label">My account</p>
           <h2>Vulkan</h2>

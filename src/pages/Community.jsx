@@ -9,7 +9,7 @@ function makeSeedPosts(pets) {
     {
       id: "post-spike",
       author: "Maya",
-      avatar: "/avatars/Clare.png",
+      avatar: "/avatars/Community1.jpg",
       petName: pets[0]?.name || "Spike",
       petSpecies: pets[0]?.species || "Bearded Dragon",
       image: pets[0]?.image || fallbackImage,
@@ -18,6 +18,7 @@ function makeSeedPosts(pets) {
       likes: 24,
       likedByMe: false,
       shares: 4,
+      sharedByMe: false,
       following: true,
       comments: [
         { id: "comment-spike-1", author: "Noah", text: "Great recovery sign. Did you change the basking lamp?", likes: 5, likedByMe: false },
@@ -27,7 +28,7 @@ function makeSeedPosts(pets) {
     {
       id: "post-mochi",
       author: "Leo",
-      avatar: "/avatars/Russ.png",
+      avatar: "/avatars/Community2.jpg",
       petName: pets[1]?.name || "Mochi",
       petSpecies: pets[1]?.species || "Leopard Gecko",
       image: pets[1]?.image || "/pets/leopard-gecko.jpg",
@@ -36,6 +37,7 @@ function makeSeedPosts(pets) {
       likes: 18,
       likedByMe: false,
       shares: 2,
+      sharedByMe: false,
       following: false,
       comments: [
         { id: "comment-mochi-1", author: "Maya", text: "A moist hide reset usually helps mine after shedding too.", likes: 4, likedByMe: false },
@@ -44,7 +46,7 @@ function makeSeedPosts(pets) {
     {
       id: "post-noodle",
       author: "Ava",
-      avatar: "/avatars/Jill.png",
+      avatar: "/avatars/Community3.jpg",
       petName: pets[2]?.name || "Noodle",
       petSpecies: pets[2]?.species || "Ball Python",
       image: pets[2]?.image || "/pets/ball-python.webp",
@@ -53,6 +55,7 @@ function makeSeedPosts(pets) {
       likes: 41,
       likedByMe: false,
       shares: 9,
+      sharedByMe: false,
       following: true,
       comments: [
         { id: "comment-noodle-1", author: "You", text: "This is exactly the kind of habit checklist new keepers need.", likes: 8, likedByMe: false },
@@ -91,7 +94,7 @@ function Community({ pets }) {
     const nextPost = {
       id: `post-${Date.now()}`,
       author: "You",
-      avatar: "/avatars/Angel.png",
+      avatar: "/avatars/Vulkan.jpg",
       petName: selectedPet?.name || "My reptile",
       petSpecies: selectedPet?.species || "Reptile",
       image: previewImage || selectedPet?.image || "/pets/bearded-dragon.webp",
@@ -100,6 +103,7 @@ function Community({ pets }) {
       likes: 0,
       likedByMe: false,
       shares: 0,
+      sharedByMe: false,
       following: true,
       comments: [],
     };
@@ -125,7 +129,11 @@ function Community({ pets }) {
 
   const sharePost = (id) => {
     setPosts((currentPosts) =>
-      currentPosts.map((post) => (post.id === id ? { ...post, shares: post.shares + 1 } : post)),
+      currentPosts.map((post) =>
+        post.id === id && !post.sharedByMe
+          ? { ...post, sharedByMe: true, shares: post.shares + 1 }
+          : post,
+      ),
     );
   };
 
@@ -251,7 +259,7 @@ function Community({ pets }) {
                 <button onClick={() => setOpenComments((current) => ({ ...current, [post.id]: !current[post.id] }))} type="button" aria-label="Open comments">
                   <span className="engagement-icon">{"\u25CC"}</span> {post.comments.length}
                 </button>
-                <button onClick={() => sharePost(post.id)} type="button" aria-label="Share post">
+                <button className={post.sharedByMe ? "share-button shared" : "share-button"} onClick={() => sharePost(post.id)} type="button" aria-label="Share post">
                   <span className="engagement-icon">{"\u2197"}</span> {post.shares}
                 </button>
               </div>

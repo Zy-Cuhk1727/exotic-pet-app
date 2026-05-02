@@ -6,6 +6,7 @@ import Chat from "./pages/Chat";
 import Community from "./pages/Community";
 import Dashboard from "./pages/Dashboard";
 import Devices from "./pages/Devices";
+import DownloadPage from "./pages/DownloadPage";
 import Premium from "./pages/Premium";
 import Profile from "./pages/Profile";
 import Shop from "./pages/Shop";
@@ -23,6 +24,7 @@ const routes = [
 const pagePaths = [
   ...routes.map((route) => route.path),
   "/chat",
+  "/download",
   "/premium",
 ];
 
@@ -645,6 +647,10 @@ function App() {
     );
   };
 
+  if (pathname === "/download") {
+    return <DownloadPage />;
+  }
+
   return (
     <div className="app-shell">
       <main className="app-frame" aria-label="ReptiMind prototype">
@@ -718,4 +724,3 @@ function App() {
 }
 
 export default App;
-

@@ -441,6 +441,9 @@ function App() {
   const [pathname, navigate] = usePathRouter();
   const [pets, setPets] = useState(() => clearInitialTrend(reptilePets));
   const [activePetId, setActivePetId] = useState(reptilePets[0].id);
+  const [isPushEnabled, setIsPushEnabled] = useState(true);
+  const [isCelsius, setIsCelsius] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [notifications, setNotifications] = useState(() => readLocalArray(ALERTS_STORAGE_KEY));
   const petsRef = useRef(pets);
   const activePet = pets.find((pet) => pet.id === activePetId) || pets[0];
@@ -589,6 +592,8 @@ function App() {
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {
+      if (!isPushEnabled) return;
+
       const nextAlert = generateEnvironmentAlert(petsRef.current);
       if (!nextAlert) return;
 
@@ -596,7 +601,7 @@ function App() {
     }, ALERT_GENERATION_INTERVAL_MS);
 
     return () => window.clearInterval(intervalId);
-  }, []);
+  }, [isPushEnabled]);
 
   const markNotificationRead = (id) => {
     setNotifications((currentAlerts) =>
@@ -614,7 +619,7 @@ function App() {
 
   const renderPage = () => {
     if (pathname === "/chat") return <Chat activePet={activePet} pets={pets} />;
-    if (pathname === "/devices") return <Devices pet={activePet} />;
+    if (pathname === "/devices") return <Devices pet={activePet} useCelsius={isCelsius} />;
     if (pathname === "/community") return <Community pets={pets} />;
     if (pathname === "/shop") return <Shop />;
     if (pathname === "/premium") return <Premium />;
@@ -622,9 +627,15 @@ function App() {
       return (
         <Profile
           activePetId={activePetId}
+          isCelsius={isCelsius}
+          isDarkMode={isDarkMode}
+          isPushEnabled={isPushEnabled}
           notificationCount={notifications.filter((alert) => !alert.read).length}
           onNavigate={navigate}
           onSelectPet={setActivePetId}
+          onToggleCelsius={() => setIsCelsius((current) => !current)}
+          onToggleDarkMode={() => setIsDarkMode((current) => !current)}
+          onTogglePush={() => setIsPushEnabled((current) => !current)}
           pets={pets}
         />
       );
@@ -640,6 +651,7 @@ function App() {
         pets={pets}
         mockPetIds={mockPetIds}
         notifications={notifications}
+        useCelsius={isCelsius}
         onDeleteNotification={deleteNotification}
         onMarkAllNotificationsRead={markAllNotificationsRead}
         onMarkNotificationRead={markNotificationRead}
@@ -652,7 +664,7 @@ function App() {
   }
 
   return (
-    <div className="app-shell">
+    <div className={isDarkMode ? "app-shell dark-mode" : "app-shell"}>
       <main className="app-frame" aria-label="ReptiMind prototype">
         <header className="app-header">
           <div>

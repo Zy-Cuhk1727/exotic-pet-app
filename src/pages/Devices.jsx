@@ -1,14 +1,24 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 
 const initialSensors = [
-  { id: "warm", name: "Warm-side temperature", value: "31.8°C", status: "Online", tone: "green" },
-  { id: "cool", name: "Cool-side temperature", value: "26.4°C", status: "Online", tone: "blue" },
+  { id: "warm", name: "Warm-side temperature", value: "31.8掳C", status: "Online", tone: "green" },
+  { id: "cool", name: "Cool-side temperature", value: "26.4掳C", status: "Online", tone: "blue" },
   { id: "humid", name: "Humidity sensor", value: "56%", status: "Online", tone: "green" },
   { id: "uvb", name: "UVB / light monitor", value: "4.2 UVI", status: "Online", tone: "orange" },
   { id: "feeder", name: "Feeding reminder", value: "Tomorrow", status: "Reminder", tone: "blue" },
 ];
 
-function Devices({ pet }) {
+function formatTemperatureText(value, useCelsius) {
+  const celsius = Number.parseFloat(String(value).replace(/[^\d.-]/g, ""));
+  if (!Number.isFinite(celsius)) return value;
+  return useCelsius ? `${celsius.toFixed(1)}°C` : `${(celsius * 1.8 + 32).toFixed(1)}°F`;
+}
+
+function formatSensorValue(sensor, useCelsius) {
+  if (!sensor.name.toLowerCase().includes("temperature")) return sensor.value;
+  return formatTemperatureText(sensor.value, useCelsius);
+}
+function Devices({ pet, useCelsius = true }) {
   const [sensors] = useState(initialSensors);
   const [petPosition, setPetPosition] = useState({ x: 50, y: 20, rotation: -3 });
   const [controls, setControls] = useState({
@@ -71,7 +81,7 @@ function Devices({ pet }) {
         </div>
 
         <div className="device-camera-stage" aria-label={`${pet.name} habitat camera preview`}>
-          <div className="device-camera-light">{pet.cameraTemp.replace("掳C", "°C")}</div>
+          <div className="device-camera-light">{formatTemperatureText(pet.cameraTemp, useCelsius)}</div>
           <div className="device-vine one" />
           <div className="device-vine two" />
           <div className="device-leaf-cluster left">
@@ -144,7 +154,7 @@ function Devices({ pet }) {
                 <strong>{sensor.name}</strong>
                 <span>{sensor.status}</span>
               </div>
-              <em>{sensor.value}</em>
+              <em>{formatSensorValue(sensor, useCelsius)}</em>
             </article>
           ))}
         </div>
@@ -205,3 +215,5 @@ function Devices({ pet }) {
 }
 
 export default Devices;
+
+

@@ -280,6 +280,89 @@ button {
   box-shadow: 0 26px 60px rgba(25, 64, 50, 0.28);
 }
 
+.app-shell.dark-mode {
+  background:
+    radial-gradient(circle at 18% 16%, rgba(47, 143, 97, 0.18), transparent 28%),
+    radial-gradient(circle at 82% 12%, rgba(245, 158, 11, 0.12), transparent 26%),
+    linear-gradient(135deg, #081712 0%, #10251f 52%, #07131b 100%);
+}
+
+.app-shell.dark-mode .app-frame {
+  border-color: #91dfac;
+  background: #0e1d18;
+  box-shadow: 0 26px 60px rgba(0, 0, 0, 0.48);
+}
+
+.app-shell.dark-mode .screen,
+.app-shell.dark-mode .bottom-nav,
+.app-shell.dark-mode .web-sidebar {
+  background: #0e1d18;
+}
+
+.app-shell.dark-mode .app-header,
+.app-shell.dark-mode .app-header h1,
+.app-shell.dark-mode .page h2,
+.app-shell.dark-mode .page h3,
+.app-shell.dark-mode .home-status-panel h2,
+.app-shell.dark-mode .home-section-head h2 {
+  color: #f2fff1;
+}
+
+.app-shell.dark-mode .muted,
+.app-shell.dark-mode .setting-toggle,
+.app-shell.dark-mode .device-row small,
+.app-shell.dark-mode .home-alert-row span,
+.app-shell.dark-mode .home-alert-row em,
+.app-shell.dark-mode .product-card p,
+.app-shell.dark-mode .community-post p {
+  color: #b7c8bf;
+}
+
+.app-shell.dark-mode .panel,
+.app-shell.dark-mode .home-status-panel,
+.app-shell.dark-mode .pet-dialog-sidebar,
+.app-shell.dark-mode .product-card,
+.app-shell.dark-mode .community-post,
+.app-shell.dark-mode .device-row,
+.app-shell.dark-mode .setting-toggle,
+.app-shell.dark-mode .checkout-panel,
+.app-shell.dark-mode .assistant-panel {
+  border-color: rgba(145, 223, 172, 0.14);
+  background: #142820;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.26);
+}
+
+.app-shell.dark-mode .ghost-button,
+.app-shell.dark-mode .shop-categories button,
+.app-shell.dark-mode .community-sort-chips button,
+.app-shell.dark-mode .home-mini-metrics article,
+.app-shell.dark-mode .home-care-row article,
+.app-shell.dark-mode .pet-dialog-item,
+.app-shell.dark-mode .profile-pet-item,
+.app-shell.dark-mode .help-grid button {
+  background: #1c342b;
+  color: #f2fff1;
+}
+
+.app-shell.dark-mode .nav-item {
+  color: #b7c8bf;
+}
+
+.app-shell.dark-mode .nav-item.active,
+.app-shell.dark-mode .submit-pet-button,
+.app-shell.dark-mode .setting-toggle.on strong {
+  background: #91dfac;
+  color: #0e1d18;
+}
+
+.app-shell.dark-mode input,
+.app-shell.dark-mode select,
+.app-shell.dark-mode textarea {
+  border-color: rgba(145, 223, 172, 0.18);
+  background: #0e1d18;
+  color: #f2fff1;
+}
+
 .web-sidebar {
   display: none;
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 
 const conditionOptions = [
   { label: "Normal", tone: "green" },
@@ -86,9 +86,22 @@ function validatePetForm(form) {
 }
 
 function getDisplayUnit(unit) {
-  return unit === "掳C" || unit === "C" ? "°C" : unit;
+  return unit === "鎺矯" || unit === "C" ? "掳C" : unit;
 }
 
+function isTemperatureMetric(metric) {
+  return ["鎺矯", "掳C", "°C", "C"].includes(metric.unit);
+}
+
+function formatMetric(metric, useCelsius) {
+  const unit = getDisplayUnit(metric.unit).replace("掳", "°");
+  if (!isTemperatureMetric(metric) || useCelsius) return { value: metric.value, unit };
+
+  const celsius = Number.parseFloat(String(metric.value).replace(/[^\d.-]/g, ""));
+  if (!Number.isFinite(celsius)) return { value: metric.value, unit };
+
+  return { value: (celsius * 1.8 + 32).toFixed(1), unit: "°F" };
+}
 function Dashboard({
   activePetId,
   onSelectPet,
@@ -102,6 +115,7 @@ function Dashboard({
   onDeleteNotification,
   onMarkAllNotificationsRead,
   onMarkNotificationRead,
+  useCelsius = true,
 }) {
   const builtInPets = pets.filter((item) => mockPetIds.includes(item.id));
   const customPets = pets.filter((item) => !mockPetIds.includes(item.id));
@@ -295,16 +309,20 @@ function Dashboard({
       </section>
 
       <section className="metric-grid" aria-label="Current sensor readings">
-        {pet.metrics.map((metric) => (
-          <article className={`metric-card ${metric.tone}`} key={metric.label}>
-            <p>{metric.label}</p>
-            <strong>
-              {metric.value}
-              <small>{getDisplayUnit(metric.unit)}</small>
-            </strong>
-            <span>{metric.status}</span>
-          </article>
-        ))}
+        {pet.metrics.map((metric) => {
+          const formattedMetric = formatMetric(metric, useCelsius);
+
+          return (
+            <article className={`metric-card ${metric.tone}`} key={metric.label}>
+              <p>{metric.label}</p>
+              <strong>
+                {formattedMetric.value}
+                <small>{formattedMetric.unit}</small>
+              </strong>
+              <span>{metric.status}</span>
+            </article>
+          );
+        })}
       </section>
 
       <section className="pet-switcher" aria-label="Reptile profiles">
@@ -341,7 +359,7 @@ function Dashboard({
                 </option>
                 {customPets.map((item) => (
                   <option key={item.id} value={item.id}>
-                    {item.name} · {item.species}
+                    {item.name} 路 {item.species}
                   </option>
                 ))}
               </select>
@@ -449,7 +467,7 @@ function Dashboard({
             {pet.name} is {pet.mood.toLowerCase()}
           </h2>
           <p className="muted">
-            {pet.species} · {pet.habitat} · Last sensor sync: {pet.lastSync}
+            {pet.species} 路 {pet.habitat} 路 Last sensor sync: {pet.lastSync}
           </p>
           <div className={`condition-banner ${pet.condition.tone}`}>
             <strong>{pet.condition.label}</strong>
@@ -552,4 +570,6 @@ function Dashboard({
 }
 
 export default Dashboard;
+
+
 

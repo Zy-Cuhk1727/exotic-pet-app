@@ -8,15 +8,21 @@ const initialDevices = [
 
 const helpItems = ["FAQ", "Contact support", "Setup tutorial", "Care emergency checklist"];
 
-function Profile({ activePetId, notificationCount = 0, onNavigate, onSelectPet, pets }) {
+function Profile({
+  activePetId,
+  isCelsius = true,
+  isDarkMode = false,
+  isPushEnabled = true,
+  notificationCount = 0,
+  onNavigate,
+  onSelectPet,
+  onToggleCelsius,
+  onToggleDarkMode,
+  onTogglePush,
+  pets,
+}) {
   const [selectedPetId, setSelectedPetId] = useState(activePetId);
   const [devices, setDevices] = useState(initialDevices);
-  const [preferences, setPreferences] = useState({
-    pushAlerts: true,
-    celsius: true,
-    english: true,
-    darkMode: false,
-  });
   const [draftSaved, setDraftSaved] = useState(false);
 
   const selectedPet = pets.find((pet) => pet.id === selectedPetId) || pets[0];
@@ -46,9 +52,11 @@ function Profile({ activePetId, notificationCount = 0, onNavigate, onSelectPet, 
     ]);
   };
 
-  const togglePreference = (key) => {
-    setPreferences((current) => ({ ...current, [key]: !current[key] }));
-  };
+  const preferenceRows = [
+    ["pushAlerts", "Push notifications", isPushEnabled, onTogglePush],
+    ["celsius", "Temperature in Celsius", isCelsius, onToggleCelsius],
+    ["darkMode", "Dark mode", isDarkMode, onToggleDarkMode],
+  ];
 
   const openLiveProfile = () => {
     if (selectedPet) onSelectPet(selectedPet.id);
@@ -175,15 +183,10 @@ function Profile({ activePetId, notificationCount = 0, onNavigate, onSelectPet, 
       <section className="panel profile-section">
         <p className="section-label">Preferences</p>
         <div className="settings-grid">
-          {[
-            ["pushAlerts", "Push notifications"],
-            ["celsius", "Temperature in Celsius"],
-            ["english", "Language: English"],
-            ["darkMode", "Dark mode"],
-          ].map(([key, label]) => (
-            <button className={preferences[key] ? "setting-toggle on" : "setting-toggle"} key={key} onClick={() => togglePreference(key)} type="button">
+          {preferenceRows.map(([key, label, isOn, onToggle]) => (
+            <button className={isOn ? "setting-toggle on" : "setting-toggle"} key={key} onClick={onToggle} type="button">
               <span>{label}</span>
-              <strong>{preferences[key] ? "On" : "Off"}</strong>
+              <strong>{isOn ? "On" : "Off"}</strong>
             </button>
           ))}
         </div>

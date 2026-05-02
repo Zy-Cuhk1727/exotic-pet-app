@@ -1,36 +1,3 @@
-function buildPoints(data, field) {
-  if (data.length < 2) return "";
-
-  const width = 300;
-  const height = 120;
-  const values = data.map((item) => item[field]);
-  const min = Math.min(...values) - 1;
-  const max = Math.max(...values) + 1;
-
-  return data
-    .map((item, index) => {
-      const x = (index / (data.length - 1)) * width;
-      const y = height - ((item[field] - min) / (max - min)) * height;
-      return `${x},${y}`;
-    })
-    .join(" ");
-}
-
-function getAxisTicks(data, field) {
-  if (data.length === 0) return [];
-
-  const values = data.map((item) => item[field]);
-  const min = Math.floor(Math.min(...values) - 1);
-  const max = Math.ceil(Math.max(...values) + 1);
-  const middle = Math.round((min + max) / 2);
-
-  return [
-    { label: max, y: 10 },
-    { label: middle, y: 70 },
-    { label: min, y: 130 },
-  ];
-}
-
 import { useState } from "react";
 
 const conditionOptions = [
@@ -136,7 +103,6 @@ function Dashboard({
   onMarkAllNotificationsRead,
   onMarkNotificationRead,
 }) {
-  const hasTrendData = pet.trend.length >= 2;
   const builtInPets = pets.filter((item) => mockPetIds.includes(item.id));
   const customPets = pets.filter((item) => !mockPetIds.includes(item.id));
   const activePetIsCustom = customPets.some((item) => item.id === activePetId);
@@ -146,10 +112,10 @@ function Dashboard({
   const unreadAlertCount = allAlerts.filter((alert) => !alert.read).length;
   const activeAlertCount = allAlerts.filter((alert) => alert.petId === pet.id && !alert.read).length;
   const feedingReminder = pet.species.toLowerCase().includes("python")
-    ? "Next feeding reminder: this weekend"
+    ? "Next feeding reminder: this weekend, 9:20"
     : pet.species.toLowerCase().includes("frog")
-    ? "Next feeding reminder: tomorrow evening"
-    : "Next feeding reminder: tomorrow morning";
+    ? "Next feeding reminder: tomorrow, 9:20"
+    : "Next feeding reminder: tomorrow, 9:20";
   const lightSchedule = "Light schedule: 08:00-20:00";
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [editingPetId, setEditingPetId] = useState("");
@@ -157,7 +123,9 @@ function Dashboard({
   const [isSavingPet, setIsSavingPet] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [isDeletingPet, setIsDeletingPet] = useState(false);
+  const [alertsExpanded, setAlertsExpanded] = useState(false);
   const isEditingPet = Boolean(editingPetId);
+  const visibleAlerts = allAlerts.slice(0, alertsExpanded ? 50 : 3);
 
   const updateNewPet = (field, value) => {
     if (field === "conditionLabel") {
@@ -302,15 +270,6 @@ function Dashboard({
             <span>{pet.condition.detail}</span>
           </div>
 
-          <div className="home-mini-metrics">
-            {pet.metrics.slice(0, 3).map((metric) => (
-              <article key={metric.label}>
-                <span>{metric.label}</span>
-                <strong>{metric.value}<small>{getDisplayUnit(metric.unit)}</small></strong>
-              </article>
-            ))}
-          </div>
-
           <div className="home-care-row">
             <article>
               <span>Feeding</span>
@@ -333,6 +292,19 @@ function Dashboard({
             </button>
           </div>
         </article>
+      </section>
+
+      <section className="metric-grid" aria-label="Current sensor readings">
+        {pet.metrics.map((metric) => (
+          <article className={`metric-card ${metric.tone}`} key={metric.label}>
+            <p>{metric.label}</p>
+            <strong>
+              {metric.value}
+              <small>{getDisplayUnit(metric.unit)}</small>
+            </strong>
+            <span>{metric.status}</span>
+          </article>
+        ))}
       </section>
 
       <section className="pet-switcher" aria-label="Reptile profiles">
@@ -405,6 +377,10 @@ function Dashboard({
             <label className="wide-field image-upload-field">
               Local pet photo
               <input accept="image/*" type="file" onChange={(event) => updateImageFile(event.target.files?.[0])} />
+              <span className="file-upload-control">
+                <strong>Choose file</strong>
+                <em>{newPet.imageName || "No file selected"}</em>
+              </span>
               <div className="image-upload-preview">
                 {newPet.image ? <img alt="Pet preview" src={newPet.image} /> : <span>No image selected</span>}
                 <strong>{newPet.imageName || "Choose a photo from this computer"}</strong>
@@ -495,19 +471,6 @@ function Dashboard({
         </div>
       </section>
 
-      <section className="metric-grid" aria-label="Current sensor readings">
-        {pet.metrics.map((metric) => (
-          <article className={`metric-card ${metric.tone}`} key={metric.label}>
-            <p>{metric.label}</p>
-            <strong>
-              {metric.value}
-              <small>{getDisplayUnit(metric.unit)}</small>
-            </strong>
-            <span>{metric.status}</span>
-          </article>
-        ))}
-      </section>
-
       <section className="panel home-alerts-panel">
         <div className="panel-heading">
           <div>
@@ -524,7 +487,7 @@ function Dashboard({
           </div>
         </div>
         <div className="home-alert-list">
-          {(allAlerts.length > 0 ? allAlerts.slice(0, 6) : [{
+          {(allAlerts.length > 0 ? visibleAlerts : [{
             id: "no-alerts",
             petName: pet.name,
             petId: pet.id,
@@ -540,6 +503,7 @@ function Dashboard({
               <div>
                 <strong>{alert.petName}: {alert.title}</strong>
                 <span>{alert.message}</span>
+                <small className={`alert-severity-badge ${alert.severity.toLowerCase()}`}>{alert.severity}</small>
               </div>
               <em>{alert.read ? "Read" : alert.time}</em>
               {alert.id !== "no-alerts" && (
@@ -557,47 +521,11 @@ function Dashboard({
             </article>
           ))}
         </div>
-      </section>
-
-      <section className="panel">
-        <div className="panel-heading">
-          <div>
-            <p className="section-label">12-hour trend</p>
-            <h3>Temperature & humidity</h3>
-          </div>
-          <span className="pill">Live mock IoT</span>
-        </div>
-
-        {hasTrendData ? (
-          <svg className="chart" viewBox="0 0 340 150" role="img" aria-label="Temperature and humidity trend chart">
-            <line x1="34" y1="126" x2="334" y2="126" />
-            <line x1="34" y1="80" x2="334" y2="80" />
-            <line x1="34" y1="34" x2="334" y2="34" />
-            {getAxisTicks(pet.trend, "temp").map((tick) => (
-              <text className="axis-label" key={tick.y} x="26" y={tick.y}>
-                {tick.label}°C
-              </text>
-            ))}
-            <g transform="translate(34 0)">
-              <polyline points={buildPoints(pet.trend, "humidity")} className="humidity-line" />
-              <polyline points={buildPoints(pet.trend, "temp")} className="temp-line" />
-            </g>
-            {pet.trend.map((item, index) => (
-              <text key={item.time} x={34 + (index / (pet.trend.length - 1)) * 300} y="146">
-                {item.time}
-              </text>
-            ))}
-          </svg>
-        ) : (
-          <div className="chart-empty">
-            Waiting for live sensor samples...
-          </div>
+        {allAlerts.length > 3 && (
+          <button className="alert-expand-button" onClick={() => setAlertsExpanded((current) => !current)} type="button">
+            {alertsExpanded ? "Show latest 3" : `Show details (${Math.min(allAlerts.length, 50)} total)`}
+          </button>
         )}
-
-        <div className="legend">
-          <span><i className="dot temp" /> Temperature</span>
-          <span><i className="dot humidity" /> Humidity</span>
-        </div>
       </section>
 
       <section className="care-summary">
@@ -624,3 +552,4 @@ function Dashboard({
 }
 
 export default Dashboard;
+

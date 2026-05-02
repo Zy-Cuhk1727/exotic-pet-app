@@ -1,25 +1,26 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 function localReptiMindAnswer(question, activePet) {
   const lower = question.toLowerCase();
+  const petLabel = `${activePet.name} the ${activePet.species}`;
 
-  if (lower.includes("feed") || lower.includes("food") || lower.includes("喂")) {
-    return `${activePet.name}'s feeding should be handled as reminders and logs in this prototype. Most reptiles are not a good fit for automatic feeding because timing, prey size, appetite, and safety need human checking.`;
+  if (lower.includes("feed") || lower.includes("food")) {
+    return `For ${petLabel}, feeding should be handled as reminders and logs in this prototype. Timing, prey size, appetite, and safety still need human checking.`;
   }
 
-  if (lower.includes("light") || lower.includes("uvb") || lower.includes("照")) {
-    return `For ${activePet.name}, light is best shown as a schedule and UVB monitoring target. Set a day/night cycle, then check whether the lamp and UVB reading stay in range.`;
+  if (lower.includes("light") || lower.includes("uvb")) {
+    return `For ${petLabel}, light is best shown as a schedule and UVB monitoring target. Set a day/night cycle, then check whether the lamp and UVB reading stay in range.`;
   }
 
-  if (lower.includes("humidity") || lower.includes("湿")) {
-    return `Check ${activePet.name}'s humidity trend first, then adjust misting or ventilation slowly. Avoid making the whole enclosure wet unless the species needs it.`;
+  if (lower.includes("humidity")) {
+    return `For ${petLabel}, check humidity first, then adjust misting or ventilation slowly. Avoid making the whole enclosure wet unless the species needs it.`;
   }
 
-  if (lower.includes("temperature") || lower.includes("温")) {
-    return `For ${activePet.name}, compare the warm side, cool side, and basking zone instead of one single temperature. The app can simulate target settings and alerts.`;
+  if (lower.includes("temperature")) {
+    return `For ${petLabel}, compare the warm side, cool side, and basking zone instead of one single temperature. The app can simulate target settings and alerts.`;
   }
 
-  return `I can help with ${activePet.name}'s feeding reminders, light schedule, temperature, humidity, alerts, and care notes.`;
+  return `I can help with ${petLabel}'s feeding reminders, light schedule, temperature, humidity, alerts, and care notes.`;
 }
 
 function buildAppContext(activePet, pets) {
@@ -81,11 +82,14 @@ function FloatingAssistant({ activePet, notifications = [], onNavigate, pets }) 
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [panelPosition, setPanelPosition] = useState(null);
+  const dragRef = useRef(null);
   const [sessionId] = useState(() => `floating-${Date.now()}`);
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: "Hi, I am ReptiBuddy. Ask me about feeding, light, temperature, humidity, or alerts.",
+      content: `Hi, I am ReptiBuddy. I am looking at ${activePet.name} the ${activePet.species}. Ask me about feeding, light, temperature, humidity, or alerts.`,
     },
   ]);
   const unreadCount = useMemo(
@@ -118,17 +122,80 @@ function FloatingAssistant({ activePet, notifications = [], onNavigate, pets }) 
     }
   };
 
+  const startVoiceInput = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition || isListening) return;
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    setIsListening(true);
+    recognition.onresult = (event) => {
+      const transcript = event.results?.[0]?.[0]?.transcript || "";
+      if (transcript) setInput((current) => `${current} ${transcript}`.trim());
+    };
+    recognition.onend = () => setIsListening(false);
+    recognition.onerror = () => setIsListening(false);
+    recognition.start();
+  };
+
+  const startPanelDrag = (event) => {
+    if (window.matchMedia("(max-width: 1099px)").matches) return;
+    if (event.target.closest("button, input, textarea, select")) return;
+
+    const panel = event.currentTarget.closest(".assistant-panel");
+    const rect = panel.getBoundingClientRect();
+    dragRef.current = {
+      offsetX: event.clientX - rect.left,
+      offsetY: event.clientY - rect.top,
+      width: rect.width,
+      height: rect.height,
+    };
+    panel.setPointerCapture?.(event.pointerId);
+  };
+
+  const dragPanel = (event) => {
+    if (!dragRef.current) return;
+
+    const margin = 12;
+    const { offsetX, offsetY, width, height } = dragRef.current;
+    const maxX = window.innerWidth - width - margin;
+    const maxY = window.innerHeight - height - margin;
+    setPanelPosition({
+      x: Math.min(Math.max(margin, event.clientX - offsetX), maxX),
+      y: Math.min(Math.max(margin, event.clientY - offsetY), maxY),
+    });
+  };
+
+  const stopPanelDrag = (event) => {
+    dragRef.current = null;
+    event.currentTarget.releasePointerCapture?.(event.pointerId);
+  };
+
   return (
     <div className={isOpen ? "floating-assistant open" : "floating-assistant"}>
       {isOpen && (
-        <section className="assistant-panel" aria-label="Floating AI assistant">
-          <div className="assistant-panel-header">
+        <button className="assistant-sheet-scrim" onClick={() => setIsOpen(false)} type="button" aria-label="Close AI assistant" />
+      )}
+
+      {isOpen && (
+        <section
+          className={panelPosition ? "assistant-panel dragged" : "assistant-panel"}
+          aria-label="Floating AI assistant"
+          style={panelPosition ? { left: panelPosition.x, top: panelPosition.y } : undefined}
+          onPointerMove={dragPanel}
+          onPointerUp={stopPanelDrag}
+          onPointerCancel={stopPanelDrag}
+        >
+          <div className="assistant-panel-header" onPointerDown={startPanelDrag}>
             <div className="assistant-avatar cute" aria-hidden="true">
               <span />
             </div>
             <div>
               <p className="section-label">AI assistant</p>
               <h3>ReptiBuddy</h3>
+              <span>{activePet.name} - {activePet.species}</span>
             </div>
             <div className="assistant-header-actions">
               <button onClick={() => onNavigate?.("/chat")} type="button">History</button>
@@ -156,12 +223,15 @@ function FloatingAssistant({ activePet, notifications = [], onNavigate, pets }) 
               placeholder={`Ask about ${activePet.name}...`}
               value={input}
             />
+            <button className={isListening ? "voice-button listening" : "voice-button"} onClick={startVoiceInput} type="button" aria-label="Use voice input">
+              Mic
+            </button>
             <button disabled={!input.trim() || isLoading} type="submit">Send</button>
           </form>
         </section>
       )}
 
-      <button className="assistant-launcher" onClick={() => setIsOpen((current) => !current)} type="button">
+      <button className="assistant-launcher" onClick={() => setIsOpen((current) => !current)} type="button" aria-label="Open AI assistant">
         <span className="assistant-avatar cute" aria-hidden="true">
           <span />
         </span>

@@ -20,6 +20,7 @@ const products = [
     name: "Smart Terrarium Camera",
     category: "Hardware",
     price: 59,
+    rating: 4.8,
     image: "/shop/smart-terrarium-camera.jpg",
     detail: "Night vision preview, motion detection, and demo AI behavior tagging.",
   },
@@ -28,6 +29,7 @@ const products = [
     name: "Temperature Sensor Pack",
     category: "Hardware",
     price: 29,
+    rating: 4.6,
     image: "/shop/temperature-sensor-pack.webp",
     detail: "A simulated partner device for heat-zone and cool-side monitoring.",
   },
@@ -36,6 +38,7 @@ const products = [
     name: "UVB Monitor",
     category: "Hardware",
     price: 45,
+    rating: 4.5,
     image: "/shop/uvb-monitor.jpg",
     detail: "Prototype listing for light exposure trend checks.",
   },
@@ -44,6 +47,7 @@ const products = [
     name: "Reptile Snack Bundle",
     category: "Food",
     price: 18,
+    rating: 4.7,
     image: "/shop/reptile-snack-bundle.jpg",
     detail: "Partner marketplace demo for keeper-approved feeding supplies.",
   },
@@ -52,6 +56,7 @@ const products = [
     name: "Natural Hide Kit",
     category: "Habitat",
     price: 24,
+    rating: 4.4,
     image: "/shop/natural-hide-kit.webp",
     detail: "Decor and hiding accessories for stress reduction.",
   },
@@ -60,6 +65,7 @@ const products = [
     name: "Misting Nozzle Set",
     category: "Habitat",
     price: 21,
+    rating: 4.3,
     image: "/shop/misting-nozzle-set.webp",
     detail: "Humidity support for tropical and shedding-sensitive setups.",
   },
@@ -68,6 +74,7 @@ const products = [
     name: "Macro Reptile Camera",
     category: "Hardware",
     price: 152,
+    rating: 4.9,
     image: "",
     detail: "Close-focus night camera concept for small reptiles and nocturnal monitoring.",
   },
@@ -76,6 +83,7 @@ const products = [
     name: "Digital Thermo-Hygrometer",
     category: "Hardware",
     price: 27,
+    rating: 4.6,
     image: "",
     detail: "Compact temperature and humidity reader with high-precision display.",
   },
@@ -84,6 +92,7 @@ const products = [
     name: "Rock Hide Cave",
     category: "Habitat",
     price: 32,
+    rating: 4.5,
     image: "",
     detail: "Natural-look shelter for geckos, snakes, spiders, and small reptiles.",
   },
@@ -92,6 +101,7 @@ const products = [
     name: "Glass Terrarium Tank",
     category: "Habitat",
     price: 529,
+    rating: 4.8,
     image: "",
     detail: "Large display enclosure concept for a planted reptile habitat.",
   },
@@ -100,6 +110,7 @@ const products = [
     name: "Frozen Pinky Mice",
     category: "Food",
     price: 18,
+    rating: 4.2,
     image: "",
     detail: "Frozen feeder mice listing for snake feeding schedule planning.",
   },
@@ -108,6 +119,7 @@ const products = [
     name: "Gecko Nutrition Paste",
     category: "Food",
     price: 89,
+    rating: 4.7,
     image: "",
     detail: "Fruit and protein paste bundle inspired by crested gecko diet products.",
   },
@@ -132,6 +144,7 @@ function Shop() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [page, setPage] = useState(1);
   const [cart, setCart] = useState({});
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const filteredProducts = activeCategory === "All"
     ? products
     : products.filter((product) => product.category === activeCategory);
@@ -152,6 +165,8 @@ function Shop() {
     () => cartItems.reduce((total, item) => total + item.price * item.quantity, 0),
     [cartItems],
   );
+  const tax = Math.round(cartTotal * 0.08 * 100) / 100;
+  const grandTotal = Math.round((cartTotal + tax) * 100) / 100;
 
   const addToCart = (productId) => {
     setCart((currentCart) => ({
@@ -207,6 +222,10 @@ function Shop() {
           <span>{cartCount} items</span>
           <strong>${cartTotal}</strong>
         </div>
+        <button className="cart-icon-button" onClick={() => setIsCartOpen(true)} type="button" aria-label="Open cart">
+          <span>Cart</span>
+          {cartCount > 0 && <em>{cartCount}</em>}
+        </button>
       </section>
 
       <section className="shop-categories" aria-label="Product categories">
@@ -229,6 +248,9 @@ function Shop() {
             <div>
               <span>{product.category}</span>
               <h3>{product.name}</h3>
+              <div className="product-rating" aria-label={`${product.rating} star rating`}>
+                <strong>★</strong> {product.rating}
+              </div>
               <p>{product.detail}</p>
             </div>
             <div className="product-buy-row">
@@ -262,13 +284,15 @@ function Shop() {
         </button>
       </section>
 
-      <section className="panel checkout-panel">
+      {isCartOpen && <button className="cart-scrim" onClick={() => setIsCartOpen(false)} type="button" aria-label="Close cart" />}
+
+      <section className={isCartOpen ? "panel checkout-panel cart-drawer open" : "panel checkout-panel cart-drawer"}>
         <div className="panel-heading">
           <div>
             <p className="section-label">Checkout</p>
-            <h3>Demo cart</h3>
+            <h3>Cart</h3>
           </div>
-          <span className="pill">{cartCount} item{cartCount === 1 ? "" : "s"}</span>
+          <button className="ghost-button cart-close-button" onClick={() => setIsCartOpen(false)} type="button">Close</button>
         </div>
 
         {cartItems.length === 0 ? (
@@ -299,8 +323,16 @@ function Shop() {
         )}
 
         <div className="cart-total-row">
-          <span>Total</span>
+          <span>Subtotal</span>
           <strong>${cartTotal}</strong>
+        </div>
+        <div className="cart-total-row">
+          <span>Tax</span>
+          <strong>${tax}</strong>
+        </div>
+        <div className="cart-total-row grand-total">
+          <span>Total</span>
+          <strong>${grandTotal}</strong>
         </div>
 
         {cartItems.length > 0 && (

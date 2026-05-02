@@ -58,10 +58,10 @@ function Profile({ activePetId, notificationCount = 0, onNavigate, onSelectPet, 
   return (
     <div className="page profile-page">
       <section className="panel user-profile-card">
-        <img alt="" src={selectedPet?.image || "/pets/bearded-dragon.webp"} />
+        <img alt="" src="/Vulkan.png" />
         <div>
           <p className="section-label">My account</p>
-          <h2>Volkan</h2>
+          <h2>Vulkan</h2>
           <p className="muted">Reptile Guardian member - Premium trial</p>
         </div>
         <span className="member-chip">Level 4</span>

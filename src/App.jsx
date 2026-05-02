@@ -13,11 +13,11 @@ import { reptilePets } from "./data/mockData";
 import { clearInitialTrend, simulatePetTick } from "./data/liveSimulator";
 
 const routes = [
-  { path: "/", label: "Home", icon: "H" },
-  { path: "/devices", label: "Devices", icon: "D" },
-  { path: "/community", label: "Community", shortLabel: "Social", icon: "CO" },
-  { path: "/shop", label: "Shop", icon: "S" },
-  { path: "/user", label: "Me", icon: "U" },
+  { path: "/", label: "Home", icon: "home" },
+  { path: "/devices", label: "Devices", icon: "devices" },
+  { path: "/community", label: "Community", icon: "community" },
+  { path: "/shop", label: "Shop", icon: "shop" },
+  { path: "/user", label: "Me", icon: "me" },
 ];
 
 const pagePaths = [
@@ -74,7 +74,63 @@ function usePathRouter() {
 const CUSTOM_PETS_STORAGE_KEY = "reptimind-custom-pets";
 const DELETED_PETS_STORAGE_KEY = "reptimind-deleted-pets";
 const ALERTS_STORAGE_KEY = "reptimind-alert-inbox";
-const MAX_ALERTS = 30;
+const MAX_ALERTS = 50;
+const ALERT_GENERATION_INTERVAL_MS = 180000;
+
+function NavIcon({ name }) {
+  const commonProps = {
+    "aria-hidden": "true",
+    className: "nav-icon-svg",
+    fill: "none",
+    viewBox: "0 0 24 24",
+  };
+
+  if (name === "devices") {
+    return (
+      <svg {...commonProps}>
+        <rect x="5" y="4" width="14" height="16" rx="4" />
+        <path d="M9 8h6M9 12h6M10 16h4" />
+      </svg>
+    );
+  }
+
+  if (name === "community") {
+    return (
+      <svg {...commonProps}>
+        <circle cx="9" cy="9" r="3" />
+        <circle cx="16" cy="10" r="2.5" />
+        <path d="M4.5 19c.8-3 2.3-4.5 4.5-4.5s3.7 1.5 4.5 4.5M13.5 18.5c.5-2 1.6-3.1 3.2-3.1 1.5 0 2.6 1 3.1 3.1" />
+      </svg>
+    );
+  }
+
+  if (name === "shop") {
+    return (
+      <svg {...commonProps}>
+        <path d="M5 9h14l-1 10H6L5 9Z" />
+        <path d="M8 9c0-3 1.5-5 4-5s4 2 4 5" />
+        <path d="M9 13h6" />
+      </svg>
+    );
+  }
+
+  if (name === "me") {
+    return (
+      <svg {...commonProps}>
+        <circle cx="12" cy="8" r="4" />
+        <path d="M5 20c1.1-3.8 3.4-5.7 7-5.7s5.9 1.9 7 5.7" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...commonProps}>
+      <path d="M4 11.5 12 5l8 6.5" />
+      <path d="M6.5 10.5V20h11v-9.5" />
+      <path d="M10 20v-5h4v5" />
+    </svg>
+  );
+}
 
 function readLocalArray(key) {
   try {
@@ -535,7 +591,7 @@ function App() {
       if (!nextAlert) return;
 
       setNotifications((currentAlerts) => [nextAlert, ...currentAlerts].slice(0, MAX_ALERTS));
-    }, 16000);
+    }, ALERT_GENERATION_INTERVAL_MS);
 
     return () => window.clearInterval(intervalId);
   }, []);
@@ -621,7 +677,7 @@ function App() {
                 onClick={() => navigate(route.path)}
                 type="button"
               >
-                <span className="nav-icon">{route.icon}</span>
+                <span className="nav-icon"><NavIcon name={route.icon} /></span>
                 <span>{route.label}</span>
               </button>
             ))}
@@ -644,8 +700,8 @@ function App() {
               onClick={() => navigate(route.path)}
               type="button"
             >
-              <span className="nav-icon">{route.icon}</span>
-              <span>{route.shortLabel || route.label}</span>
+              <span className="nav-icon"><NavIcon name={route.icon} /></span>
+              <span>{route.label}</span>
             </button>
           ))}
         </nav>

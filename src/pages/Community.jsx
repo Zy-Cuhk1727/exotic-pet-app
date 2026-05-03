@@ -2,18 +2,34 @@ import { useState } from "react";
 
 const sortOptions = ["Latest", "Most Liked", "Following"];
 
-function makeSeedPosts(pets) {
-  const fallbackImage = "/pets/bearded-dragon.webp";
+const communityPets = [
+  {
+    name: "Sunny",
+    species: "Leopard Gecko",
+    image: "/community-pets/Communitypet1.jpg",
+  },
+  {
+    name: "Ruby",
+    species: "Corn Snake",
+    image: "/community-pets/Communitypet2.jpg",
+  },
+  {
+    name: "Mango",
+    species: "Crested Gecko",
+    image: "/community-pets/Communitypet3.jpg",
+  },
+];
 
+function makeSeedPosts() {
   return [
     {
-      id: "post-spike",
+      id: "post-sunny",
       author: "Maya",
       avatar: "/avatars/Community1.jpg",
-      petName: pets[0]?.name || "Spike",
-      petSpecies: pets[0]?.species || "Bearded Dragon",
-      image: pets[0]?.image || fallbackImage,
-      caption: "Morning basking check. Temperature looks stable and appetite is back.",
+      petName: communityPets[0].name,
+      petSpecies: communityPets[0].species,
+      image: communityPets[0].image,
+      caption: "Morning hide check. Sunny finally came out after a quiet shedding week.",
       time: "12 min ago",
       likes: 24,
       likedByMe: false,
@@ -21,18 +37,18 @@ function makeSeedPosts(pets) {
       sharedByMe: false,
       following: true,
       comments: [
-        { id: "comment-spike-1", author: "Noah", text: "Great recovery sign. Did you change the basking lamp?", likes: 5, likedByMe: false },
-        { id: "comment-spike-2", author: "Iris", text: "That posture looks much more relaxed today.", likes: 3, likedByMe: false },
+        { id: "comment-sunny-1", author: "Noah", text: "Great recovery sign. Did you add a warmer hide?", likes: 5, likedByMe: false },
+        { id: "comment-sunny-2", author: "Iris", text: "That posture looks much more relaxed today.", likes: 3, likedByMe: false },
       ],
     },
     {
-      id: "post-mochi",
+      id: "post-ruby",
       author: "Leo",
       avatar: "/avatars/Community2.jpg",
-      petName: pets[1]?.name || "Mochi",
-      petSpecies: pets[1]?.species || "Leopard Gecko",
-      image: pets[1]?.image || "/pets/leopard-gecko.jpg",
-      caption: "Fresh moist hide after shedding week. Keeping humidity gentle today.",
+      petName: communityPets[1].name,
+      petSpecies: communityPets[1].species,
+      image: communityPets[1].image,
+      caption: "Ruby handled calmly during enclosure cleaning. Lock check before feeding is now a habit.",
       time: "48 min ago",
       likes: 18,
       likedByMe: false,
@@ -40,17 +56,17 @@ function makeSeedPosts(pets) {
       sharedByMe: false,
       following: false,
       comments: [
-        { id: "comment-mochi-1", author: "Maya", text: "A moist hide reset usually helps mine after shedding too.", likes: 4, likedByMe: false },
+        { id: "comment-ruby-1", author: "Maya", text: "The lock check habit is so important after handling days.", likes: 4, likedByMe: false },
       ],
     },
     {
-      id: "post-noodle",
+      id: "post-mango",
       author: "Ava",
       avatar: "/avatars/Community3.jpg",
-      petName: pets[2]?.name || "Noodle",
-      petSpecies: pets[2]?.species || "Ball Python",
-      image: pets[2]?.image || "/pets/ball-python.webp",
-      caption: "Community reminder: always check enclosure locks after feeding.",
+      petName: communityPets[2].name,
+      petSpecies: communityPets[2].species,
+      image: communityPets[2].image,
+      caption: "Mango's climbing branch reset looks good. Keeping the evening misting light.",
       time: "2 hr ago",
       likes: 41,
       likedByMe: false,
@@ -58,14 +74,14 @@ function makeSeedPosts(pets) {
       sharedByMe: false,
       following: true,
       comments: [
-        { id: "comment-noodle-1", author: "You", text: "This is exactly the kind of habit checklist new keepers need.", likes: 8, likedByMe: false },
+        { id: "comment-mango-1", author: "You", text: "The branch setup looks much easier to inspect now.", likes: 8, likedByMe: false },
       ],
     },
   ];
 }
 
 function Community({ pets }) {
-  const [posts, setPosts] = useState(() => makeSeedPosts(pets));
+  const [posts, setPosts] = useState(() => makeSeedPosts());
   const [activeSort, setActiveSort] = useState("Latest");
   const [caption, setCaption] = useState("");
   const [selectedPetId, setSelectedPetId] = useState(pets[0]?.id || "");

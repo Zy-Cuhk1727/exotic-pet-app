@@ -4691,9 +4691,10 @@ button {
     right: 0;
     bottom: 0;
     width: 100%;
-    max-height: 58vh;
-    min-height: 50vh;
-    grid-template-rows: auto minmax(150px, 1fr) auto;
+    height: min(76vh, calc(100% - 118px));
+    max-height: calc(100% - 96px);
+    min-height: min(70vh, calc(100% - 118px));
+    grid-template-rows: auto minmax(240px, 1fr) auto;
     margin: 0;
     border-radius: 26px 26px 0 0;
     animation: assistant-sheet-in 180ms ease-out;

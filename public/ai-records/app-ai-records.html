@@ -1,0 +1,874 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ReptiMind AI 对话截图材料 - 可截图版</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --paper: #ffffff;
+      --ink: #202123;
+      --muted: #6b6c70;
+      --line: #e5e5e5;
+      --block: #f7f7f8;
+      --code-bg: #f1f1f1;
+      --accent: #8e8ea0;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Arial, "Microsoft YaHei", "PingFang SC", sans-serif;
+      font-size: 17px;
+      line-height: 1.65;
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 36px 24px 80px;
+    }
+
+    .cover,
+    section {
+      background: var(--paper);
+      border: 0;
+      border-radius: 0;
+      margin: 0 0 24px;
+      padding: 26px 0;
+      box-shadow: none;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0 0 12px;
+      line-height: 1.2;
+    }
+
+    h1 {
+      font-size: 30px;
+    }
+
+    h2 {
+      border-bottom: 2px solid var(--line);
+      font-size: 24px;
+      padding-bottom: 10px;
+    }
+
+    h3 {
+      font-size: 19px;
+      margin-top: 22px;
+    }
+
+    p {
+      margin: 8px 0 12px;
+    }
+
+    ul {
+      margin: 8px 0 16px 22px;
+      padding: 0;
+    }
+
+    li {
+      margin: 5px 0;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .tag {
+      display: inline-block;
+      border-radius: 999px;
+      background: var(--accent);
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      padding: 4px 10px;
+      margin-bottom: 10px;
+    }
+
+    .block {
+      border: 1px solid var(--line);
+      border-left: 0;
+      border-radius: 18px;
+      margin: 18px 0;
+      padding: 18px 20px;
+    }
+
+    .prompt {
+      background: var(--block);
+    }
+
+    .raw {
+      background: var(--block);
+    }
+
+    .code {
+      background: var(--block);
+    }
+
+    .explain {
+      background: var(--block);
+    }
+
+    .final {
+      background: var(--block);
+    }
+
+    .label {
+      font-weight: 700;
+      margin: 0 0 8px;
+    }
+
+    pre {
+      background: var(--code-bg);
+      color: #202123;
+      border-radius: 6px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 13px;
+      line-height: 1.45;
+      margin: 12px 0 0;
+      overflow-x: auto;
+      padding: 14px 16px;
+      white-space: pre;
+    }
+
+    code {
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    .page-break {
+      break-before: page;
+      page-break-before: always;
+    }
+
+    .small {
+      font-size: 14px;
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      main {
+        max-width: none;
+        padding: 0;
+      }
+
+      .cover,
+      section {
+        box-shadow: none;
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="cover">
+      <h1>ReptiMind AI 对话截图材料 - 可截图版</h1>
+      <p class="note">用途：给报告/PDF 制作者截图使用。当前版本只保留 5 个核心 Prompt，按照“先定技术结构，再生成初版代码，再逐步 refinement”的逻辑组织。</p>
+      <ul>
+        <li><strong>正文建议截图：</strong>Prompt Used、Key Code Output（每个 refinement 只选 1 个关键代码块）、First-Person Refinement Explanation、Final Product Connection。</li>
+        <li><strong>Appendix 建议截图：</strong>Raw AI Output 和更完整的 Coding Output。若输出过长，只截代表性部分即可。</li>
+        <li><strong>代码要求：</strong>正文只放少量关键代码片段，其他代码输出放 Appendix，避免正文变成代码手册。</li>
+      </ul>
+    </div>
+
+    <section>
+      <span class="tag">Prompt 1</span>
+      <h2>Programming Language & Structure Recommendations</h2>
+
+      <div class="block prompt">
+        <p class="label">【Prompts Used / 正文可截图】</p>
+        <p>We are the designers/founders of an AI-powered exotic reptile care app called ReptiMind. Please recommend the most suitable programming language, frontend/backend structure, and core modules for this prototype. The app should include multi-pet reptile profiles, temperature/humidity/UVB monitoring, feeding reminders, abnormal alerts, AI chat, camera/device monitoring, community posts, shop, and user profile.</p>
+        <p>Please explain why this structure is suitable for an early-stage app prototype, and provide a suggested file/module structure.</p>
+      </div>
+
+      <div class="block raw">
+        <p class="label">【Raw AI Output / Appendix 可截图】</p>
+        <p>For ReptiMind, I recommend building the prototype with <strong>React + Vite for the frontend</strong> and a lightweight <strong>Node.js backend</strong> for AI chat and local data persistence.</p>
+        <p>This structure is suitable because ReptiMind is an interactive app prototype rather than a full hardware IoT system. React allows the team to quickly build reusable pages and components such as pet cards, sensor panels, alert lists, chat windows, and shop items. Vite is lightweight and fast for early product iteration. A Node.js backend can handle AI API calls securely, because API keys should not be exposed in frontend code.</p>
+        <pre>Frontend:
+- React
+- Vite
+- JavaScript
+- CSS
+
+Backend:
+- Node.js
+- REST-style API endpoints
+- Local JSON files for prototype persistence
+
+AI Integration:
+- DeepSeek, ChatGPT, or another LLM API
+- Backend endpoint for /api/chat
+- Current pet data sent as context</pre>
+      </div>
+
+      <div class="block code">
+        <p class="label">【Suggested File/Module Structure / 正文可截图】</p>
+        <pre>reptimind-app/
+|-- public/
+|   |-- pets/
+|   |-- shop/
+|   |-- avatars/
+|
+|-- src/
+|   |-- components/
+|   |   |-- FloatingAssistant.jsx
+|   |
+|   |-- data/
+|   |   |-- mockData.js
+|   |   |-- liveSimulator.js
+|   |
+|   |-- pages/
+|   |   |-- Dashboard.jsx
+|   |   |-- Devices.jsx
+|   |   |-- Chat.jsx
+|   |   |-- Community.jsx
+|   |   |-- Shop.jsx
+|   |   |-- Profile.jsx
+|   |   |-- Premium.jsx
+|   |
+|   |-- App.jsx
+|   |-- App.css
+|   |-- main.jsx
+|
+|-- server.js
+|-- package.json
+|-- vite.config.js</pre>
+      </div>
+
+      <div class="block explain">
+        <p class="label">【First-Person Explanation / 正文可截图】</p>
+        <p>At the beginning, my goal was to clarify the technical direction before implementation. I asked AI to recommend the programming language and app structure because ReptiMind included multiple modules: dashboard, AI chat, alerts, camera/device monitoring, community, shop, and profile. This prompt helped us confirm that React/Vite was suitable for the interactive frontend, while Node.js should handle AI API calls and local data persistence.</p>
+      </div>
+
+      <div class="block final">
+        <p class="label">【Final Product Connection / 正文可截图】</p>
+        <p>This recommendation became the foundation of the final ReptiMind prototype, which includes React pages for Dashboard, Devices, Community, Shop, Profile, Premium, and Chat, plus a Node.js backend for AI chat and local persistence.</p>
+      </div>
+    </section>
+
+    <section class="page-break">
+      <span class="tag">Prompt 2</span>
+      <h2>Content Generation: Initial React/Vite App</h2>
+
+      <div class="block prompt">
+        <p class="label">【Prompts Used / 正文可截图】</p>
+        <p>Based on the ReptiMind app structure you recommended, please generate the initial React/Vite app structure and sample code.</p>
+        <p>The app should have routes/pages for Home Dashboard, Devices, Community, Shop, User Profile, Premium, and AI Chat. Please include sample pet data for reptiles such as bearded dragon, leopard gecko, ball python, Pacman frog, and crocodile.</p>
+        <p>Focus on the code structure and key components rather than full styling.</p>
+      </div>
+
+      <div class="block raw">
+        <p class="label">【Raw AI Output / Appendix 可截图】</p>
+        <p>Below is an initial React/Vite structure for ReptiMind. The goal of this version is to create a working app skeleton first, so later refinements can add richer dashboard logic, sensor alerts, AI chat context, backend integration, and improved UX.</p>
+        <pre>src/
+|-- data/
+|   |-- mockData.js
+|
+|-- pages/
+|   |-- Dashboard.jsx
+|   |-- Devices.jsx
+|   |-- Community.jsx
+|   |-- Shop.jsx
+|   |-- Profile.jsx
+|   |-- Premium.jsx
+|   |-- Chat.jsx
+|
+|-- App.jsx
+|-- main.jsx
+|-- App.css</pre>
+        <p>The initial app should use simple path-based routing. Since this is an early-stage prototype, full routing libraries are optional at the first stage. Each page can be separated into its own component so the team can refine each feature independently.</p>
+      </div>
+
+      <div class="block code">
+        <p class="label">【Partial Code Output / 正文可截图：App.jsx 路由结构】</p>
+        <pre>import { useState } from "react";
+import Dashboard from "./pages/Dashboard";
+import Devices from "./pages/Devices";
+import Community from "./pages/Community";
+import Shop from "./pages/Shop";
+import Profile from "./pages/Profile";
+import Premium from "./pages/Premium";
+import Chat from "./pages/Chat";
+import { reptilePets } from "./data/mockData";
+
+const routes = [
+  { path: "/", label: "Home" },
+  { path: "/devices", label: "Devices" },
+  { path: "/community", label: "Community" },
+  { path: "/shop", label: "Shop" },
+  { path: "/user", label: "Me" },
+  { path: "/chat", label: "AI Chat" },
+  { path: "/premium", label: "Premium" },
+];
+
+function App() {
+  const [pathname, setPathname] = useState(window.location.pathname);
+  const [activePetId, setActivePetId] = useState(reptilePets[0].id);
+  const activePet =
+    reptilePets.find((pet) => pet.id === activePetId) || reptilePets[0];
+
+  const renderPage = () => {
+    if (pathname === "/devices") return &lt;Devices pet={activePet} /&gt;;
+    if (pathname === "/community") return &lt;Community pets={reptilePets} /&gt;;
+    if (pathname === "/shop") return &lt;Shop /&gt;;
+    if (pathname === "/user") return &lt;Profile pets={reptilePets} /&gt;;
+    if (pathname === "/chat") return &lt;Chat activePet={activePet} pets={reptilePets} /&gt;;
+    if (pathname === "/premium") return &lt;Premium /&gt;;
+    return &lt;Dashboard pet={activePet} pets={reptilePets} /&gt;;
+  };
+}</pre>
+      </div>
+
+      <div class="block code">
+        <p class="label">【Extended Coding Output / Appendix 可截图：sample pet data】</p>
+        <pre>export const reptilePets = [
+  {
+    id: "spike",
+    name: "Spike",
+    species: "Bearded Dragon",
+    habitat: "Desert terrarium",
+    condition: "Normal",
+    temperature: 31.8,
+    humidity: 56,
+    uvb: 4.2,
+    activity: 76,
+    alert: "Basking zone is slightly warm.",
+  },
+  {
+    id: "noodle",
+    name: "Noodle",
+    species: "Ball Python",
+    habitat: "Tropical hide system",
+    condition: "Humidity watch",
+    temperature: 31.0,
+    humidity: 61,
+    activity: 33,
+    alert: "Humidity is below target range.",
+  },
+];</pre>
+      </div>
+
+      <div class="block explain">
+        <p class="label">【First-Person Explanation / 正文可截图】</p>
+        <p>After the structure was clear, my goal was to create a working React/Vite foundation with separate pages and reusable sample reptile data. I asked AI to generate the initial app skeleton, then we kept the route structure and page separation from the output. This gave us a clean base for later refinements such as monitoring, AI chat, device controls, community, shop, and profile functions.</p>
+      </div>
+
+      <div class="block final">
+        <p class="label">【Final Product Connection / 正文可截图】</p>
+        <p>In the final version, the simple app skeleton was expanded into a richer React app with Dashboard, Devices, Chat, Community, Shop, Profile, Premium, mockData, liveSimulator, FloatingAssistant, and server.js.</p>
+      </div>
+    </section>
+
+    <section class="page-break">
+      <span class="tag">Prompt 3</span>
+      <h2>Refinement 1: Multi-Pet Dashboard & Sensor Alerts</h2>
+
+      <div class="block prompt">
+        <p class="label">【Prompts Used / 正文可截图】</p>
+        <p>Please refine the ReptiMind dashboard to better support multiple reptile pets.</p>
+        <p>Requirements:</p>
+        <ul>
+          <li>Show multiple pet profiles.</li>
+          <li>Each pet should have species, habitat, condition, activity level, temperature, humidity, UVB or other relevant metrics.</li>
+          <li>Add recent alerts for abnormal temperature, low humidity, low activity, injury, missing status, or death record.</li>
+          <li>Add care checklist and suggested action for each pet.</li>
+          <li>The data should be structured so it can be reused by dashboard, AI chat, and alert system.</li>
+        </ul>
+        <p>Please provide partial React/JavaScript code for the data structure and dashboard logic.</p>
+      </div>
+
+      <div class="block raw">
+        <p class="label">【Raw AI Output / Appendix 可截图】</p>
+        <p>To support multiple reptile pets more effectively, the dashboard data should not stay as flat fields like temperature, humidity, and alert. It should be redesigned as a reusable pet profile object.</p>
+        <p>Each pet should contain basic identity, current condition, sensor metrics, alerts, care checklist, and suggested actions. This structure is better because the same pet object can be reused by the Dashboard, AI Chat, and Alert System.</p>
+        <pre>Reusable pet profile object:
+- id, name, species, image, habitat
+- condition: label, tone, detail
+- metrics: temperature, humidity, UVB, soil, water, activity
+- alerts: title, message, time, severity
+- checklist: daily care tasks
+- action and actionDetail</pre>
+      </div>
+
+      <div class="block code">
+        <p class="label">【Key Code Output / 正文可截图：structured pet data】</p>
+        <pre>export const reptilePets = [
+  {
+    id: "spike",
+    name: "Spike",
+    species: "Bearded Dragon",
+    image: "/pets/bearded-dragon.webp",
+    habitat: "Desert terrarium",
+    mood: "Active and stable",
+    condition: {
+      label: "Normal",
+      tone: "green",
+      detail: "Camera and sensors show normal daily behavior.",
+    },
+    activity: 76,
+    action: "Reduce heat lamp output",
+    actionDetail:
+      "Lower the basking lamp by 10%, then check whether the basking zone returns below 33°C within 15 minutes.",
+    metrics: [
+      { label: "Temperature", value: "31.8", unit: "°C", status: "Warm", tone: "orange" },
+      { label: "Humidity", value: "56", unit: "%", status: "Ideal", tone: "green" },
+      { label: "UVB", value: "4.2", unit: "UVI", status: "Good", tone: "blue" },
+    ],
+    checklist: [
+      "Feeding logged at 09:20",
+      "Water bowl checked",
+      "Basking lamp schedule normal",
+    ],
+    alerts: [
+      {
+        title: "Temperature too high",
+        message: "Basking zone reached 34.2°C. Lower heat lamp output by 10%.",
+        time: "2 min ago",
+        severity: "High",
+      },
+    ],
+  },
+];</pre>
+      </div>
+
+      <div class="block code">
+        <p class="label">【Extended Coding Output / Appendix 可截图：dashboard rendering logic】</p>
+        <pre>function Dashboard({ activePetId, onSelectPet, pet, pets, notifications = [] }) {
+  const unreadAlertCount = notifications.filter((alert) => !alert.read).length;
+  const activeAlertCount = notifications.filter(
+    (alert) => alert.petId === pet.id && !alert.read,
+  ).length;
+
+  return (
+    &lt;div className="page dashboard-page"&gt;
+      &lt;section className="pet-dialog-list"&gt;
+        {pets.map((item) =&gt; (
+          &lt;button
+            className={item.id === activePetId ? "pet-dialog-item active" : "pet-dialog-item"}
+            key={item.id}
+            onClick={() =&gt; onSelectPet(item.id)}
+            type="button"
+          &gt;
+            &lt;strong&gt;{item.name}&lt;/strong&gt;
+            &lt;small&gt;{item.species}&lt;/small&gt;
+            &lt;i className={`condition-dot ${item.condition.tone}`}&gt;
+              {item.condition.label}
+            &lt;/i&gt;
+          &lt;/button&gt;
+        ))}
+      &lt;/section&gt;
+
+      &lt;section className="metric-grid"&gt;
+        {pet.metrics.map((metric) =&gt; (
+          &lt;article className={`metric-card ${metric.tone}`} key={metric.label}&gt;
+            &lt;p&gt;{metric.label}&lt;/p&gt;
+            &lt;strong&gt;{metric.value}&lt;small&gt;{metric.unit}&lt;/small&gt;&lt;/strong&gt;
+            &lt;span&gt;{metric.status}&lt;/span&gt;
+          &lt;/article&gt;
+        ))}
+      &lt;/section&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+      </div>
+
+      <div class="block code">
+        <p class="label">【Extended Coding Output / Appendix 可截图：reusable alert logic】</p>
+        <pre>function generateEnvironmentAlert(pets) {
+  const pet = pets[Math.floor(Math.random() * pets.length)];
+  const humidity = Number(
+    pet.metrics.find((item) =&gt; item.label === "Humidity")?.value,
+  );
+  const activity = Number(pet.activity || 0);
+
+  if (humidity &lt;= 45) {
+    return {
+      id: `alert-${Date.now()}`,
+      petId: pet.id,
+      petName: pet.name,
+      title: "Humidity low",
+      message: `${pet.name}'s humidity dropped to ${humidity}%. Review misting schedule or moist hide.`,
+      severity: "Medium",
+      source: "Humidity sensor",
+      time: "Just now",
+      read: false,
+    };
+  }
+
+  if (activity &lt;= 35) {
+    return {
+      id: `alert-${Date.now()}`,
+      petId: pet.id,
+      petName: pet.name,
+      title: "Activity lower than usual",
+      message: `${pet.name}'s movement score is ${activity}%. Check feeding, shedding, and hide use.`,
+      severity: "Medium",
+      source: "Camera AI",
+      time: "Just now",
+      read: false,
+    };
+  }
+
+  return null;
+}</pre>
+      </div>
+
+      <div class="block explain">
+        <p class="label">【First-Person Refinement Explanation / 正文可截图】</p>
+        <p>When we reviewed the first version, my goal was to make the dashboard support realistic multi-pet monitoring. I asked AI to refine the data model around reusable pet objects, including condition, metrics, alerts, checklist, and suggested action.</p>
+        <p>We adopted this structure because it connected several features in one design: the dashboard could render different pets, the alert system could read the same metrics, and the AI chat could later reuse the same pet data as context.</p>
+      </div>
+
+      <div class="block final">
+        <p class="label">【Final Product Connection / 正文可截图】</p>
+        <p>This refinement corresponds to the final ReptiMind files: src/data/mockData.js, src/pages/Dashboard.jsx, src/App.jsx, and src/data/liveSimulator.js. The final product uses this structure to display multiple reptile profiles, sensor cards, abnormal alerts, care checklist items, and suggested actions for each pet.</p>
+      </div>
+    </section>
+
+    <section class="page-break">
+      <span class="tag">Prompt 4</span>
+      <h2>Refinement 2: AI Chat with Pet Context</h2>
+
+      <div class="block prompt">
+        <p class="label">【Prompts Used / 正文可截图】</p>
+        <p>Please refine ReptiMind by adding an AI chat feature.</p>
+        <p>Requirements:</p>
+        <ul>
+          <li>Users can ask reptile care questions.</li>
+          <li>The AI should receive current app data as context, including active pet name, species, condition, metrics, alerts, and suggested actions.</li>
+          <li>Add quick prompts such as feeding, humidity, and temperature questions.</li>
+          <li>Save chat sessions locally.</li>
+          <li>If the live AI API is not connected, provide a fallback demo reply.</li>
+        </ul>
+        <p>Please provide partial React code showing the chat page, context-building function, API call function, and message sending logic.</p>
+      </div>
+
+      <div class="block raw">
+        <p class="label">【Raw AI Output / Appendix 可截图】</p>
+        <p>The AI chat should not be a generic chatbot. It should use ReptiMind's current pet profiles as context so that answers can refer to the selected reptile, recent alerts, sensor metrics, and suggested care actions.</p>
+        <p>The frontend can build an <code>appContext</code> object from the active pet and all saved pets. This context is sent to a backend endpoint, such as <code>/api/chat</code>, together with recent chat messages. If the backend or live AI provider is unavailable, the UI should still return a safe demo answer so the prototype remains usable during presentation.</p>
+      </div>
+
+      <div class="block code">
+        <p class="label">【Extended Coding Output / Appendix 可截图：quick prompts and default messages】</p>
+        <pre>export const quickPrompts = [
+  "My leopard gecko is not eating. What should I check first?",
+  "Is 34°C too hot for a bearded dragon basking spot?",
+  "How can I raise humidity safely for a ball python?",
+];
+
+export const defaultMessages = [
+  {
+    role: "assistant",
+    content:
+      "Hi, I am ReptiMind. Ask me about temperature, humidity, feeding, shedding, or daily reptile care.",
+  },
+];</pre>
+      </div>
+
+      <div class="block code">
+        <p class="label">【Key Code Output / 正文可截图：build app context for AI】</p>
+        <pre>function buildAppContext(activePet, pets) {
+  return {
+    activePetId: activePet.id,
+    activePetName: activePet.name,
+    activePetSpecies: activePet.species,
+    pets: pets.map((pet) =&gt; ({
+      id: pet.id,
+      name: pet.name,
+      species: pet.species,
+      habitat: pet.habitat,
+      mood: pet.mood,
+      condition: pet.condition,
+      lastSync: pet.lastSync,
+      activity: `${pet.activity}%`,
+      metrics: pet.metrics.map((metric) =&gt; ({
+        label: metric.label,
+        value: `${metric.value}${metric.unit}`,
+        status: metric.status,
+      })),
+      alerts: pet.alerts.map((alert) =&gt; ({
+        title: alert.title,
+        severity: alert.severity,
+        message: alert.message,
+      })),
+      suggestedAction: pet.action,
+      suggestedActionDetail: pet.actionDetail,
+    })),
+  };
+}</pre>
+      </div>
+
+      <div class="block code">
+        <p class="label">【Extended Coding Output / Appendix 可截图：API call and fallback reply】</p>
+        <pre>async function callAiApi(messages, appContext) {
+  const response = await fetch("/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ messages, appContext }),
+  });
+
+  const data = await response.json().catch(() =&gt; ({}));
+
+  if (!response.ok) {
+    throw new Error(data.error || "AI request failed");
+  }
+
+  return data.answer || "I could not read the AI response.";
+}
+
+function localReptiMindAnswer(question) {
+  const lower = question.toLowerCase();
+
+  if (lower.includes("humid") || lower.includes("humidity")) {
+    return "Raise humidity gradually by adding moist hide substrate, misting lightly, and checking ventilation. Avoid soaking the whole enclosure.";
+  }
+
+  if (lower.includes("hot") || lower.includes("temperature")) {
+    return "Check the species-specific temperature range and always compare warm side, cool side, and basking zone.";
+  }
+
+  return "Check environment range, recent behavior change, and feeding or shedding history first.";
+}</pre>
+      </div>
+
+      <div class="block code">
+        <p class="label">【Extended Coding Output / Appendix 可截图：send message logic】</p>
+        <pre>const sendMessage = async (text = input) =&gt; {
+  const content = text.trim();
+  if (!content || isLoading || !activeSession) return;
+
+  const nextMessages = [...messages, { role: "user", content }];
+  updateActiveSession(nextMessages);
+  setInput("");
+  setIsLoading(true);
+
+  try {
+    const appContext = buildAppContext(activePet, pets);
+    const answer = await callAiApi(nextMessages, appContext);
+    updateActiveSession([...nextMessages, { role: "assistant", content: answer }]);
+  } catch {
+    const fallback = localReptiMindAnswer(content);
+    updateActiveSession([
+      ...nextMessages,
+      {
+        role: "assistant",
+        content: `Live AI is not connected yet, so here is demo guidance: ${fallback}`,
+      },
+    ]);
+  } finally {
+    setIsLoading(false);
+  }
+};</pre>
+      </div>
+
+      <div class="block explain">
+        <p class="label">【First-Person Refinement Explanation / 正文可截图】</p>
+        <p>After the dashboard data became structured, my goal was to make the AI chat context-aware. I asked AI to design a context-building function that sends the active pet's species, condition, metrics, alerts, and suggested action to the chat API.</p>
+        <p>We also kept quick prompts and fallback replies from the output, because they made the chat feature easier to demonstrate and kept the prototype usable even when the live AI API was unavailable.</p>
+      </div>
+
+      <div class="block final">
+        <p class="label">【Final Product Connection / 正文可截图】</p>
+        <p>This refinement corresponds to the final ReptiMind files: src/pages/Chat.jsx and src/data/mockData.js. The final product includes quick prompts, saved sessions, AI context building, API calls, and fallback demo guidance.</p>
+      </div>
+    </section>
+
+    <section class="page-break">
+      <span class="tag">Prompt 5</span>
+      <h2>Refinement 3: Backend API & DeepSeek Integration</h2>
+
+      <div class="block prompt">
+        <p class="label">【Prompts Used / 正文可截图】</p>
+        <p>Please design a simple Node.js backend for ReptiMind's AI chat.</p>
+        <p>Requirements:</p>
+        <ul>
+          <li>Provide an /api/chat endpoint.</li>
+          <li>Connect to DeepSeek or another large language model API using an environment variable API key.</li>
+          <li>Send a system prompt that defines ReptiMind as a reptile care assistant.</li>
+          <li>Include current app pet data as context.</li>
+          <li>Save chat sessions locally in JSON files.</li>
+          <li>Add safety instructions: the AI should not diagnose disease and should recommend a reptile veterinarian for urgent symptoms.</li>
+        </ul>
+        <p>Please provide partial Node.js code for the backend endpoint, system prompt, context formatting, and session saving.</p>
+      </div>
+
+      <div class="block raw">
+        <p class="label">【Raw AI Output / Appendix 可截图】</p>
+        <p>The backend should act as a secure bridge between the frontend and the large language model. This is important because API keys should be stored in environment variables on the backend, not exposed in browser code.</p>
+        <p>The backend should define ReptiMind's role through a system prompt, normalize the current app context, format pet data into readable text, call the model API, and return only the answer to the frontend. It can also save chat sessions in local JSON files for the prototype stage.</p>
+      </div>
+
+      <div class="block code">
+        <p class="label">【Key Code Output / 正文可截图：backend setup and system prompt】</p>
+        <pre>const PORT = Number(process.env.PORT || 3001);
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+const DEEPSEEK_MODEL = process.env.DEEPSEEK_MODEL || "deepseek-v4-flash";
+const DEEPSEEK_URL = "https://api.deepseek.com/chat/completions";
+
+const systemPrompt = `
+You are ReptiMind, an AI assistant for reptile pet care.
+Answer in the same language as the user when possible.
+Give practical husbandry advice for reptiles such as bearded dragons,
+leopard geckos, ball pythons, and Pacman frogs.
+Focus on temperature, humidity, UVB, feeding, shedding, behavior,
+and basic enclosure checks.
+When current app data is provided, use it to answer questions about pets,
+readings, alerts, activity, and suggested actions.
+Do not claim to diagnose disease. For urgent symptoms, weight loss,
+injury, breathing issues, or prolonged refusal to eat, recommend contacting
+a qualified reptile veterinarian.
+`.trim();</pre>
+      </div>
+
+      <div class="block code">
+        <p class="label">【Extended Coding Output / Appendix 可截图：normalize app context】</p>
+        <pre>function normalizeAppContext(appContext) {
+  if (!appContext || typeof appContext !== "object" || !Array.isArray(appContext.pets)) {
+    return null;
+  }
+
+  return {
+    activePetName: String(appContext.activePetName || "").slice(0, 80),
+    activePetSpecies: String(appContext.activePetSpecies || "").slice(0, 80),
+    pets: appContext.pets.slice(0, 8).map((pet) =&gt; ({
+      name: String(pet.name || "").slice(0, 80),
+      species: String(pet.species || "").slice(0, 80),
+      habitat: String(pet.habitat || "").slice(0, 120),
+      mood: String(pet.mood || "").slice(0, 120),
+      condition: pet.condition,
+      activity: String(pet.activity || "").slice(0, 40),
+      metrics: Array.isArray(pet.metrics) ? pet.metrics.slice(0, 6) : [],
+      alerts: Array.isArray(pet.alerts) ? pet.alerts.slice(0, 4) : [],
+      suggestedAction: String(pet.suggestedAction || "").slice(0, 140),
+      suggestedActionDetail: String(pet.suggestedActionDetail || "").slice(0, 260),
+    })),
+  };
+}</pre>
+      </div>
+
+      <div class="block code">
+        <p class="label">【Extended Coding Output / Appendix 可截图：format context for LLM】</p>
+        <pre>function formatAppContext(appContext) {
+  if (!appContext) return "";
+
+  const petSummaries = appContext.pets
+    .map((pet) =&gt; {
+      const metrics = pet.metrics
+        .map((metric) =&gt; `${metric.label}: ${metric.value} (${metric.status})`)
+        .join("; ");
+      const alerts = pet.alerts.length
+        ? pet.alerts.map((alert) =&gt; `${alert.severity} - ${alert.title}: ${alert.message}`).join("; ")
+        : "No active alerts";
+
+      return [
+        `Pet: ${pet.name}`,
+        `Species: ${pet.species}`,
+        `Habitat: ${pet.habitat}`,
+        `Mood: ${pet.mood}`,
+        `Activity: ${pet.activity}`,
+        `Metrics: ${metrics || "No metrics"}`,
+        `Alerts: ${alerts}`,
+        `Suggested action: ${pet.suggestedAction}. ${pet.suggestedActionDetail}`,
+      ].join("\n");
+    })
+    .join("\n\n");
+
+  return `Current ReptiMind app data:
+Active pet: ${appContext.activePetName} (${appContext.activePetSpecies})
+
+${petSummaries}`;
+}</pre>
+      </div>
+
+      <div class="block code">
+        <p class="label">【Key Code Output / 正文可截图：/api/chat endpoint】</p>
+        <pre>async function handleChat(request, response) {
+  if (!DEEPSEEK_API_KEY) {
+    sendJson(response, 500, { error: "DEEPSEEK_API_KEY is not set on the backend server." });
+    return;
+  }
+
+  const body = await readJsonBody(request);
+  const messages = normalizeMessages(body.messages);
+  const appContext = normalizeAppContext(body.appContext);
+  const appContextPrompt = formatAppContext(appContext);
+
+  const aiResponse = await fetch(DEEPSEEK_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: DEEPSEEK_MODEL,
+      messages: [
+        { role: "system", content: systemPrompt },
+        ...(appContextPrompt ? [{ role: "system", content: appContextPrompt }] : []),
+        ...messages,
+      ],
+      max_tokens: 700,
+      temperature: 0.4,
+    }),
+  });
+
+  const data = await aiResponse.json();
+  sendJson(response, 200, {
+    answer: data.choices?.[0]?.message?.content || "I could not read the AI response.",
+  });
+}</pre>
+      </div>
+
+      <div class="block explain">
+        <p class="label">【First-Person Refinement Explanation / 正文可截图】</p>
+        <p>Once the frontend chat flow was clear, my goal was to connect the chat feature to a real LLM API through a safer backend layer. I asked AI to design a Node.js endpoint that reads the DeepSeek API key from environment variables and formats current pet data before sending it to the model.</p>
+        <p>I also asked for a safety-focused system prompt because reptile care advice can affect pet health. We kept the rule that ReptiMind should provide husbandry guidance, avoid disease diagnosis, and recommend a qualified reptile veterinarian for urgent symptoms.</p>
+      </div>
+
+      <div class="block final">
+        <p class="label">【Final Product Connection / 正文可截图】</p>
+        <p>This refinement corresponds to the final ReptiMind file server.js. The final backend includes /api/chat, chat session storage, custom pet persistence, deleted pet persistence, usage logging, DeepSeek integration, and safety-focused system instructions.</p>
+      </div>
+    </section>
+
+    <section class="page-break">
+      <span class="tag">截图使用指南</span>
+      <h2>How To Use These Screenshots In The PDF</h2>
+      <div class="block final">
+        <p class="label">【建议放在报告里的组织方式】</p>
+        <p><strong>D1.1 Final Product:</strong> briefly describe the final ReptiMind app prototype and list the completed modules.</p>
+        <p><strong>D1.2 Product Generation &amp; Prompt Engineering:</strong> insert screenshots from Prompt 1 to Prompt 5. For each prompt, include the prompt itself, only the marked Key Code Output, and the first-person refinement explanation.</p>
+        <p><strong>Appendix:</strong> place the longer Raw AI Output screenshots and the marked Extended Coding Output screenshots. If the raw output is too long, include representative parts only.</p>
+        <p><strong>Conclusion &amp; Analysis:</strong> write AI evaluation separately in the report, instead of mixing it into this coding prompt record.</p>
+      </div>
+
+      <div class="block explain">
+        <p class="label">【哪些内容最值得截图】</p>
+        <ul>
+          <li>Prompt 1: technology stack and module structure.</li>
+          <li>Prompt 2 正文：App.jsx route structure；Appendix：sample pet data.</li>
+          <li>Prompt 3 正文：structured pet object；Appendix：dashboard rendering and alert logic.</li>
+          <li>Prompt 4 正文：buildAppContext；Appendix：quick prompts, API call, sendMessage.</li>
+          <li>Prompt 5 正文：systemPrompt and /api/chat endpoint；Appendix：normalizeAppContext and formatAppContext.</li>
+          <li>Removed: Floating Assistant UX and AI Evaluation prompts, because the final prompt record should stay focused and concise.</li>
+          <li>Database Schema: table overview, core table fields, relationships, refinement explanation.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
+
+

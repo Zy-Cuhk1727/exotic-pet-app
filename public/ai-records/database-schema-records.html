@@ -1,0 +1,847 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ReptiMind AI 对话截图材料 - 可截图版</title>
+  <style>
+    :root {
+      --bg: #eef6ef;
+      --paper: #ffffff;
+      --ink: #173226;
+      --muted: #547064;
+      --line: #cfe2d4;
+      --block: #f7fbf7;
+      --code-bg: #edf8ee;
+      --accent: #66b47b;
+      --blue: #2f6f58;
+      --green: #2f9b62;
+      --orange: #88b96a;
+      --red: #5aa7a0;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Times New Roman", "Microsoft YaHei", SimSun, serif;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 36px 24px 80px;
+    }
+
+    .cover,
+    section {
+      background: var(--paper);
+      border: 1px solid #ead8b6;
+      border-radius: 6px;
+      margin: 0 0 24px;
+      padding: 26px 30px;
+      box-shadow: 0 8px 24px rgba(20, 80, 50, 0.08);
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0 0 12px;
+      line-height: 1.2;
+    }
+
+    h1 {
+      font-size: 30px;
+    }
+
+    h2 {
+      border-bottom: 2px solid var(--line);
+      font-size: 24px;
+      padding-bottom: 10px;
+    }
+
+    h3 {
+      font-size: 19px;
+      margin-top: 22px;
+    }
+
+    p {
+      margin: 8px 0 12px;
+    }
+
+    ul {
+      margin: 8px 0 16px 22px;
+      padding: 0;
+    }
+
+    li {
+      margin: 5px 0;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .tag {
+      display: inline-block;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #0f2a1d;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      padding: 4px 10px;
+      margin-bottom: 10px;
+    }
+
+    .block {
+      border: 1px solid var(--line);
+      border-left: 6px solid var(--accent);
+      border-radius: 6px;
+      margin: 18px 0;
+      padding: 18px 20px;
+    }
+
+    .prompt {
+      background: var(--block);
+    }
+
+    .raw {
+      background: var(--block);
+    }
+
+    .code {
+      background: var(--block);
+    }
+
+    .explain {
+      background: var(--block);
+    }
+
+    .final {
+      background: var(--block);
+    }
+
+    .label {
+      font-weight: 700;
+      margin: 0 0 8px;
+    }
+
+    pre {
+      background: var(--code-bg);
+      color: #173226;
+      border: 1px solid #cfe2d4;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 13px;
+      line-height: 1.45;
+      margin: 12px 0 0;
+      overflow-x: auto;
+      padding: 14px 16px;
+      white-space: pre;
+    }
+
+    code {
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    .page-break {
+      break-before: page;
+      page-break-before: always;
+    }
+
+    .small {
+      font-size: 14px;
+    }
+
+    .erd {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: 1fr 1fr;
+      margin-top: 14px;
+    }
+
+    .cluster {
+      background: #fbfefb;
+      border: 4px solid var(--green);
+      border-radius: 34px;
+      padding: 14px;
+    }
+
+    .cluster:nth-child(1) {
+      border-color: var(--red);
+    }
+
+    .cluster:nth-child(2) {
+      border-color: var(--green);
+    }
+
+    .cluster:nth-child(3) {
+      border-color: var(--orange);
+    }
+
+    .cluster:nth-child(4) {
+      border-color: #3f8f74;
+    }
+
+    .cluster h4 {
+      color: var(--green);
+      font-size: 15px;
+      margin: 0 0 12px;
+      text-align: center;
+    }
+
+    .entity {
+      background: #f8fcf9;
+      border: 1px solid #c9ddcf;
+      border-radius: 2px;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+
+    .entity strong {
+      background: var(--blue);
+      color: white;
+      display: block;
+      padding: 8px 10px;
+    }
+
+    .entity ul {
+      margin: 0;
+      padding: 8px 12px 10px 24px;
+    }
+
+    .entity li {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1.35;
+      margin: 2px 0;
+    }
+
+    .caption {
+      color: var(--muted);
+      font-style: italic;
+      text-align: center;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin-top: 14px;
+      width: 100%;
+    }
+
+    th,
+    td {
+      border: 1px solid #4a4a4a;
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #8fc79f;
+      color: #102518;
+    }
+
+    td {
+      background: #ffffff;
+    }
+
+    td code {
+      color: #173226;
+      font-size: 13px;
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      main {
+        max-width: none;
+        padding: 0;
+      }
+
+      .cover,
+      section {
+        box-shadow: none;
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="cover">
+      <h1>ReptiMind Database Schema AI 截图材料 - 可截图版</h1>
+      <p class="note">用途：单独给数据库 Schema deliverable 截图使用。Prompt 语气按照 APP 开发人员/产品团队来写。</p>
+      <ul>
+        <li><strong>正文建议截图：</strong>Final Product ERD、Table Definitions、Major Entity Tables、Relationship Mapping、Prompt Used、Explanation of Refinements Made。</li>
+        <li><strong>Appendix 建议截图：</strong>Raw AI Output。若输出过长，只截主要部分即可。</li>
+      </ul>
+    </div>
+<section class="page-break">
+      <span class="tag">Database Schema Deliverable</span>
+      <h2>D2. Database Schema: Production Data Model</h2>
+
+      <div class="block prompt">
+        <p class="label">【Prompts Used / 正文可截图】</p>
+        <p>We are app developers building an AI-powered exotic reptile care app called ReptiMind. The current prototype uses mock JavaScript data, localStorage, and optional local JSON files, but we want to design a production-ready relational database schema for the app.</p>
+        <p>Please design a relational database schema for a future production version of ReptiMind. It should support users, reptile pet profiles, sensor readings, alerts, AI chat sessions, chat messages, community posts, community comments, shop products, orders, order items, and premium subscriptions.</p>
+        <p>Please include detailed tables, primary keys, foreign keys, important fields, and relationships. Also explain how the schema maps to the current prototype features.</p>
+      </div>
+
+      <div class="block raw">
+        <p class="label">【Raw AI Output / Appendix 可截图】</p>
+        <p>Although the current ReptiMind prototype does not use a real relational database, a production version should store data in structured tables. The existing prototype already implies several data entities: users, pets, sensor metrics, alerts, AI chat sessions, community content, shop products, and subscriptions.</p>
+        <p>The database schema can therefore be designed as a future-ready model. It documents how the app could scale from mock data and local JSON files into a real cloud-based business system. This is useful because the schema documents detailed tables, fields, and relationships before the app moves from prototype storage to a fully deployed database.</p>
+      </div>
+
+      <div class="block final">
+        <p class="label">【Final Product / 正文可截图：ERD Figure】</p>
+        <p>The ERD below visualizes the 12 tables and their relationships. The schema is organized into four clusters:</p>
+        <ul>
+          <li><strong>User &amp; Pet Care Cluster:</strong> Users, Pets, Subscriptions</li>
+          <li><strong>Monitoring &amp; AI Cluster:</strong> SensorReadings, Alerts, ChatSessions, ChatMessages</li>
+          <li><strong>Community Cluster:</strong> CommunityPosts, CommunityComments</li>
+          <li><strong>Products &amp; Orders Cluster:</strong> Products, Orders, OrderItems</li>
+        </ul>
+        <div class="erd" aria-label="ERD for ReptiMind database">
+          <div class="cluster">
+            <h4>User & Pet Care Cluster</h4>
+            <div class="entity">
+              <strong>Users</strong>
+              <ul>
+                <li>user_id PK</li>
+                <li>username</li>
+                <li>email UNIQUE</li>
+                <li>preferred_unit</li>
+                <li>push_enabled</li>
+              </ul>
+            </div>
+            <div class="entity">
+              <strong>Pets</strong>
+              <ul>
+                <li>pet_id PK</li>
+                <li>user_id FK</li>
+                <li>name, species</li>
+                <li>habitat</li>
+                <li>condition_label</li>
+              </ul>
+            </div>
+            <div class="entity">
+              <strong>Subscriptions</strong>
+              <ul>
+                <li>subscription_id PK</li>
+                <li>user_id FK</li>
+                <li>plan_name</li>
+                <li>status</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="cluster">
+            <h4>Monitoring & AI Cluster</h4>
+            <div class="entity">
+              <strong>SensorReadings</strong>
+              <ul>
+                <li>reading_id PK</li>
+                <li>pet_id FK</li>
+                <li>temperature_c</li>
+                <li>humidity_percent</li>
+                <li>uvb_uvi</li>
+                <li>recorded_at</li>
+              </ul>
+            </div>
+            <div class="entity">
+              <strong>Alerts</strong>
+              <ul>
+                <li>alert_id PK</li>
+                <li>pet_id FK</li>
+                <li>user_id FK</li>
+                <li>severity</li>
+                <li>is_read</li>
+              </ul>
+            </div>
+            <div class="entity">
+              <strong>ChatSessions</strong>
+              <ul>
+                <li>session_id PK</li>
+                <li>user_id FK</li>
+                <li>active_pet_id FK</li>
+                <li>assistant_avatar_id</li>
+              </ul>
+            </div>
+            <div class="entity">
+              <strong>ChatMessages</strong>
+              <ul>
+                <li>message_id PK</li>
+                <li>session_id FK</li>
+                <li>role</li>
+                <li>content</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="cluster">
+            <h4>Community Cluster</h4>
+            <div class="entity">
+              <strong>CommunityPosts</strong>
+              <ul>
+                <li>post_id PK</li>
+                <li>user_id FK</li>
+                <li>pet_id FK NULL</li>
+                <li>title, body</li>
+              </ul>
+            </div>
+            <div class="entity">
+              <strong>CommunityComments</strong>
+              <ul>
+                <li>comment_id PK</li>
+                <li>post_id FK</li>
+                <li>user_id FK</li>
+                <li>body</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="cluster">
+            <h4>Products & Orders Cluster</h4>
+            <div class="entity">
+              <strong>Products</strong>
+              <ul>
+                <li>product_id PK</li>
+                <li>name, category</li>
+                <li>price</li>
+                <li>stock_quantity</li>
+              </ul>
+            </div>
+            <div class="entity">
+              <strong>Orders</strong>
+              <ul>
+                <li>order_id PK</li>
+                <li>user_id FK</li>
+                <li>total_amount</li>
+                <li>order_status</li>
+              </ul>
+            </div>
+            <div class="entity">
+              <strong>OrderItems</strong>
+              <ul>
+                <li>order_item_id PK</li>
+                <li>order_id FK</li>
+                <li>product_id FK</li>
+                <li>quantity</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <p class="caption">Figure D2-1. ERD for ReptiMind Database, illustrating tables and relationships.</p>
+      </div>
+
+      <div class="block final">
+        <p class="label">【Final Product / 正文可截图：Table Definitions】</p>
+        <p>The schema comprises 12 tables, each supporting a specific ReptiMind feature. The table below lists the tables, their purposes, and representative fields.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Table</th>
+              <th>Description</th>
+              <th>Fields</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Users</td>
+              <td>Stores user account, preferences, notification settings, and personalization data.</td>
+              <td><code>user_id PK</code>, <code>username</code>, <code>email UNIQUE</code>, <code>password_hash</code>, <code>preferred_unit</code>, <code>push_enabled</code>, <code>created_at</code></td>
+            </tr>
+            <tr>
+              <td>Pets</td>
+              <td>Stores each reptile profile owned by a user.</td>
+              <td><code>pet_id PK</code>, <code>user_id FK</code>, <code>name</code>, <code>species</code>, <code>habitat</code>, <code>condition_label</code>, <code>activity_score</code>, <code>suggested_action</code></td>
+            </tr>
+            <tr>
+              <td>SensorReadings</td>
+              <td>Stores time-series monitoring data for temperature, humidity, UVB, activity, water, and soil readings.</td>
+              <td><code>reading_id PK</code>, <code>pet_id FK</code>, <code>temperature_c</code>, <code>humidity_percent</code>, <code>uvb_uvi</code>, <code>activity_score</code>, <code>recorded_at</code></td>
+            </tr>
+            <tr>
+              <td>Alerts</td>
+              <td>Stores abnormal condition warnings generated by sensor readings or pet status.</td>
+              <td><code>alert_id PK</code>, <code>pet_id FK</code>, <code>user_id FK</code>, <code>title</code>, <code>message</code>, <code>severity</code>, <code>source</code>, <code>is_read</code></td>
+            </tr>
+            <tr>
+              <td>ChatSessions</td>
+              <td>Stores AI chat sessions for each user and selected pet.</td>
+              <td><code>session_id PK</code>, <code>user_id FK</code>, <code>active_pet_id FK</code>, <code>title</code>, <code>assistant_avatar_id</code>, <code>created_at</code></td>
+            </tr>
+            <tr>
+              <td>ChatMessages</td>
+              <td>Stores user and assistant messages within a chat session.</td>
+              <td><code>message_id PK</code>, <code>session_id FK</code>, <code>role</code>, <code>content</code>, <code>model_name</code>, <code>created_at</code></td>
+            </tr>
+            <tr>
+              <td>CommunityPosts</td>
+              <td>Stores reptile community posts and optional linked pet profiles.</td>
+              <td><code>post_id PK</code>, <code>user_id FK</code>, <code>pet_id FK NULL</code>, <code>title</code>, <code>body</code>, <code>image_url</code>, <code>like_count</code></td>
+            </tr>
+            <tr>
+              <td>CommunityComments</td>
+              <td>Stores replies and discussion under community posts.</td>
+              <td><code>comment_id PK</code>, <code>post_id FK</code>, <code>user_id FK</code>, <code>body</code>, <code>created_at</code></td>
+            </tr>
+            <tr>
+              <td>Products</td>
+              <td>Stores reptile care products such as sensors, tanks, food, hides, and cameras.</td>
+              <td><code>product_id PK</code>, <code>name</code>, <code>category</code>, <code>description</code>, <code>price</code>, <code>stock_quantity</code>, <code>is_active</code></td>
+            </tr>
+            <tr>
+              <td>Orders</td>
+              <td>Stores user purchase records and order status.</td>
+              <td><code>order_id PK</code>, <code>user_id FK</code>, <code>total_amount</code>, <code>order_status</code>, <code>payment_status</code>, <code>created_at</code></td>
+            </tr>
+            <tr>
+              <td>OrderItems</td>
+              <td>Stores products included in each order.</td>
+              <td><code>order_item_id PK</code>, <code>order_id FK</code>, <code>product_id FK</code>, <code>quantity</code>, <code>unit_price</code></td>
+            </tr>
+            <tr>
+              <td>Subscriptions</td>
+              <td>Stores premium plan, billing status, and AI feature access settings.</td>
+              <td><code>subscription_id PK</code>, <code>user_id FK</code>, <code>plan_name</code>, <code>price</code>, <code>status</code>, <code>ai_chat_limit</code>, <code>device_history_days</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="block final">
+        <p class="label">【Final Product / 正文可截图：Major Entity Tables】</p>
+        <p>After defining all tables, we identified the major entity tables that carry the core business data of ReptiMind. These tables are the main bridge between the current app prototype and a future production database.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Major Entity</th>
+              <th>Cluster</th>
+              <th>Main Role in ReptiMind</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Users</td>
+              <td>User &amp; Pet Care</td>
+              <td>Represents the pet owner account and stores app preferences.</td>
+            </tr>
+            <tr>
+              <td>Pets</td>
+              <td>User &amp; Pet Care</td>
+              <td>Represents each reptile profile monitored by the app.</td>
+            </tr>
+            <tr>
+              <td>SensorReadings</td>
+              <td>Monitoring &amp; AI</td>
+              <td>Stores the time-series care data used by dashboard, alerts, and AI context.</td>
+            </tr>
+            <tr>
+              <td>Alerts</td>
+              <td>Monitoring &amp; AI</td>
+              <td>Stores abnormal events such as high temperature, low humidity, low activity, injury, or missing status.</td>
+            </tr>
+            <tr>
+              <td>ChatSessions / ChatMessages</td>
+              <td>Monitoring &amp; AI</td>
+              <td>Stores AI conversations and links them to the user and selected pet.</td>
+            </tr>
+            <tr>
+              <td>CommunityPosts</td>
+              <td>Community</td>
+              <td>Stores shared reptile moments and user-generated care discussions.</td>
+            </tr>
+            <tr>
+              <td>Products / Orders / OrderItems</td>
+              <td>Products &amp; Orders</td>
+              <td>Supports the reptile care shop and future commerce functions.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="block final">
+        <p class="label">【Final Product / 正文可截图：Relationship Mapping】</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Relationship</th>
+              <th>Cardinality</th>
+              <th>Description</th>
+              <th>Foreign Key Reference</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Users to Pets</td>
+              <td>1:N</td>
+              <td>One user can manage many reptile pet profiles.</td>
+              <td><code>Pets.user_id -> Users.user_id</code></td>
+            </tr>
+            <tr>
+              <td>Pets to SensorReadings</td>
+              <td>1:N</td>
+              <td>One pet can have many time-series sensor readings.</td>
+              <td><code>SensorReadings.pet_id -> Pets.pet_id</code></td>
+            </tr>
+            <tr>
+              <td>Pets to Alerts</td>
+              <td>1:N</td>
+              <td>One pet can trigger many abnormal condition alerts.</td>
+              <td><code>Alerts.pet_id -> Pets.pet_id</code></td>
+            </tr>
+            <tr>
+              <td>Users to ChatSessions</td>
+              <td>1:N</td>
+              <td>One user can create many AI chat sessions.</td>
+              <td><code>ChatSessions.user_id -> Users.user_id</code></td>
+            </tr>
+            <tr>
+              <td>ChatSessions to ChatMessages</td>
+              <td>1:N</td>
+              <td>One chat session contains many user or assistant messages.</td>
+              <td><code>ChatMessages.session_id -> ChatSessions.session_id</code></td>
+            </tr>
+            <tr>
+              <td>Users to CommunityPosts</td>
+              <td>1:N</td>
+              <td>One user can publish many community posts.</td>
+              <td><code>CommunityPosts.user_id -> Users.user_id</code></td>
+            </tr>
+            <tr>
+              <td>CommunityPosts to CommunityComments</td>
+              <td>1:N</td>
+              <td>One community post can have many comments.</td>
+              <td><code>CommunityComments.post_id -> CommunityPosts.post_id</code></td>
+            </tr>
+            <tr>
+              <td>Users to Orders</td>
+              <td>1:N</td>
+              <td>One user can place many shop orders.</td>
+              <td><code>Orders.user_id -> Users.user_id</code></td>
+            </tr>
+            <tr>
+              <td>Orders to OrderItems</td>
+              <td>1:N</td>
+              <td>One order can contain multiple reptile care products.</td>
+              <td><code>OrderItems.order_id -> Orders.order_id</code></td>
+            </tr>
+            <tr>
+              <td>Products to OrderItems</td>
+              <td>1:N</td>
+              <td>One product can appear in many order line items.</td>
+              <td><code>OrderItems.product_id -> Products.product_id</code></td>
+            </tr>
+            <tr>
+              <td>Users to Subscriptions</td>
+              <td>1:N</td>
+              <td>One user can have subscription history records.</td>
+              <td><code>Subscriptions.user_id -> Users.user_id</code></td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="caption">Table D2-2. Entity Relationship Mapping for ReptiMind Database.</p>
+      </div>
+
+      <div class="block code">
+        <p class="label">【Partial Schema Output / 正文可截图：Core Tables】</p>
+        <pre>Users(
+  user_id PK,
+  username,
+  email UNIQUE,
+  password_hash,
+  preferred_unit,
+  push_enabled,
+  dark_mode_enabled,
+  created_at
+)
+
+Pets(
+  pet_id PK,
+  user_id FK -&gt; Users.user_id,
+  name,
+  species,
+  habitat,
+  image_url,
+  condition_label,
+  condition_detail,
+  activity_score,
+  suggested_action,
+  suggested_action_detail,
+  created_at,
+  updated_at
+)
+
+SensorReadings(
+  reading_id PK,
+  pet_id FK -&gt; Pets.pet_id,
+  temperature_c,
+  humidity_percent,
+  uvb_uvi,
+  activity_score,
+  water_temp_c,
+  soil_moisture_percent,
+  recorded_at
+)
+
+Alerts(
+  alert_id PK,
+  pet_id FK -&gt; Pets.pet_id,
+  user_id FK -&gt; Users.user_id,
+  title,
+  message,
+  severity,
+  source,
+  is_read,
+  created_at
+)</pre>
+      </div>
+
+      <div class="block code">
+        <p class="label">【Partial Schema Output / 正文可截图：AI Chat and Community Tables】</p>
+        <pre>ChatSessions(
+  session_id PK,
+  user_id FK -&gt; Users.user_id,
+  active_pet_id FK -&gt; Pets.pet_id,
+  title,
+  assistant_avatar_id,
+  created_at,
+  updated_at
+)
+
+ChatMessages(
+  message_id PK,
+  session_id FK -&gt; ChatSessions.session_id,
+  role,
+  content,
+  model_name,
+  created_at
+)
+
+CommunityPosts(
+  post_id PK,
+  user_id FK -&gt; Users.user_id,
+  pet_id FK -&gt; Pets.pet_id NULL,
+  title,
+  body,
+  image_url,
+  like_count,
+  created_at
+)
+
+CommunityComments(
+  comment_id PK,
+  post_id FK -&gt; CommunityPosts.post_id,
+  user_id FK -&gt; Users.user_id,
+  body,
+  created_at
+)</pre>
+      </div>
+
+      <div class="block code">
+        <p class="label">【Partial Schema Output / 正文可截图：Shop and Subscription Tables】</p>
+        <pre>Products(
+  product_id PK,
+  name,
+  category,
+  description,
+  price,
+  image_url,
+  stock_quantity,
+  is_active
+)
+
+Orders(
+  order_id PK,
+  user_id FK -&gt; Users.user_id,
+  total_amount,
+  order_status,
+  payment_status,
+  created_at
+)
+
+OrderItems(
+  order_item_id PK,
+  order_id FK -&gt; Orders.order_id,
+  product_id FK -&gt; Products.product_id,
+  quantity,
+  unit_price
+)
+
+Subscriptions(
+  subscription_id PK,
+  user_id FK -&gt; Users.user_id,
+  plan_name,
+  price,
+  status,
+  start_date,
+  end_date,
+  ai_chat_limit,
+  device_history_days
+)</pre>
+      </div>
+
+      <div class="block final">
+        <p class="label">【Relationships / 正文可截图】</p>
+        <pre>Users 1:N Pets
+One user can manage multiple reptile pet profiles.
+
+Pets 1:N SensorReadings
+Each pet can have many time-series sensor readings.
+
+Pets 1:N Alerts
+Each pet can trigger many abnormal condition alerts.
+
+Users 1:N ChatSessions
+Each user can create multiple AI chat sessions.
+
+ChatSessions 1:N ChatMessages
+Each AI chat session contains multiple messages.
+
+Users 1:N CommunityPosts
+Each user can publish multiple community posts.
+
+CommunityPosts 1:N CommunityComments
+Each post can receive multiple comments.
+
+Users 1:N Orders
+Each user can place multiple shop orders.
+
+Orders 1:N OrderItems
+Each order can contain multiple products.
+
+Users 1:N Subscriptions
+Each user can have subscription history records.</pre>
+      </div>
+
+      <div class="block prompt">
+        <p class="label">【Refinement Prompt / 正文可截图】</p>
+        <p>The first schema is useful, but please refine it to better match the current ReptiMind prototype. The prototype includes custom pets, deleted built-in pet records, chat history, alert inbox, local fallback AI replies, product shop, and floating assistant sessions. Please explain which tables are essential for the current prototype and which tables are for future commercial scaling.</p>
+      </div>
+
+      <div class="block explain">
+        <p class="label">【Explanation of Refinements Made / 正文可截图】</p>
+        <p>After reviewing the first schema, we refined it into two levels. The essential prototype-level tables are Users, Pets, SensorReadings, Alerts, ChatSessions, and ChatMessages because they directly correspond to ReptiMind's dashboard, alert inbox, custom pet profiles, and AI chat history. The commercial expansion tables are Products, Orders, OrderItems, CommunityPosts, CommunityComments, and Subscriptions because they support future monetization, community engagement, and scaling.</p>
+        <p>This refinement makes the schema more realistic. It acknowledges that our current app uses mock data and local JSON files, while still showing how the same data objects can be migrated into a relational database for a production version.</p>
+      </div>
+
+      <div class="block final">
+        <p class="label">【Final Product Connection / 正文可截图】</p>
+        <p>The schema maps directly to the final ReptiMind prototype: pet data in <code>mockData.js</code> maps to Pets and SensorReadings; generated alerts in <code>App.jsx</code> map to Alerts; chat sessions in <code>Chat.jsx</code> and <code>server.js</code> map to ChatSessions and ChatMessages; shop products map to Products; and profile/premium settings map to Users and Subscriptions.</p>
+      </div>
+    </section>
+
+    
+  </main>
+</body>
+</html>
+

@@ -106,19 +106,27 @@
     }
 
     .prompt {
-      background: var(--block);
+      background: #f7f7f8;
+      border-color: #e5e5e5;
+      border-left-color: #8e8ea0;
     }
 
     .raw {
-      background: var(--block);
+      background: #f7f7f8;
+      border-color: #e5e5e5;
+      border-left-color: #8e8ea0;
     }
 
     .code {
-      background: var(--block);
+      background: #f7f7f8;
+      border-color: #e5e5e5;
+      border-left-color: #8e8ea0;
     }
 
     .explain {
-      background: var(--block);
+      background: #f7f7f8;
+      border-color: #e5e5e5;
+      border-left-color: #8e8ea0;
     }
 
     .final {
@@ -255,6 +263,15 @@
       font-size: 13px;
     }
 
+    .prompt pre,
+    .raw pre,
+    .code pre,
+    .explain pre {
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      color: #202123;
+    }
+
     @media print {
       body {
         background: white;
@@ -280,25 +297,12 @@
       <p class="note">用途：单独给数据库 Schema deliverable 截图使用。Prompt 语气按照 APP 开发人员/产品团队来写。</p>
       <ul>
         <li><strong>正文建议截图：</strong>Final Product ERD、Table Definitions、Major Entity Tables、Relationship Mapping、Prompt Used、Explanation of Refinements Made。</li>
-        <li><strong>Appendix 建议截图：</strong>Raw AI Output。若输出过长，只截主要部分即可。</li>
+        <li><strong>Appendix 建议截图：</strong>Raw AI Output 和 Raw Coding Output。若输出过长，只截主要部分即可。</li>
       </ul>
     </div>
 <section class="page-break">
       <span class="tag">Database Schema Deliverable</span>
       <h2>D2. Database Schema: Production Data Model</h2>
-
-      <div class="block prompt">
-        <p class="label">【Prompts Used / 正文可截图】</p>
-        <p>We are app developers building an AI-powered exotic reptile care app called ReptiMind. The current prototype uses mock JavaScript data, localStorage, and optional local JSON files, but we want to design a production-ready relational database schema for the app.</p>
-        <p>Please design a relational database schema for a future production version of ReptiMind. It should support users, reptile pet profiles, sensor readings, alerts, AI chat sessions, chat messages, community posts, community comments, shop products, orders, order items, and premium subscriptions.</p>
-        <p>Please include detailed tables, primary keys, foreign keys, important fields, and relationships. Also explain how the schema maps to the current prototype features.</p>
-      </div>
-
-      <div class="block raw">
-        <p class="label">【Raw AI Output / Appendix 可截图】</p>
-        <p>Although the current ReptiMind prototype does not use a real relational database, a production version should store data in structured tables. The existing prototype already implies several data entities: users, pets, sensor metrics, alerts, AI chat sessions, community content, shop products, and subscriptions.</p>
-        <p>The database schema can therefore be designed as a future-ready model. It documents how the app could scale from mock data and local JSON files into a real cloud-based business system. This is useful because the schema documents detailed tables, fields, and relationships before the app moves from prototype storage to a fully deployed database.</p>
-      </div>
 
       <div class="block final">
         <p class="label">【Final Product / 正文可截图：ERD Figure】</p>
@@ -652,191 +656,107 @@
         <p class="caption">Table D2-2. Entity Relationship Mapping for ReptiMind Database.</p>
       </div>
 
-      <div class="block code">
-        <p class="label">【Partial Schema Output / 正文可截图：Core Tables】</p>
-        <pre>Users(
-  user_id PK,
-  username,
-  email UNIQUE,
-  password_hash,
-  preferred_unit,
-  push_enabled,
-  dark_mode_enabled,
-  created_at
-)
-
-Pets(
-  pet_id PK,
-  user_id FK -&gt; Users.user_id,
-  name,
-  species,
-  habitat,
-  image_url,
-  condition_label,
-  condition_detail,
-  activity_score,
-  suggested_action,
-  suggested_action_detail,
-  created_at,
-  updated_at
-)
-
-SensorReadings(
-  reading_id PK,
-  pet_id FK -&gt; Pets.pet_id,
-  temperature_c,
-  humidity_percent,
-  uvb_uvi,
-  activity_score,
-  water_temp_c,
-  soil_moisture_percent,
-  recorded_at
-)
-
-Alerts(
-  alert_id PK,
-  pet_id FK -&gt; Pets.pet_id,
-  user_id FK -&gt; Users.user_id,
-  title,
-  message,
-  severity,
-  source,
-  is_read,
-  created_at
-)</pre>
-      </div>
-
-      <div class="block code">
-        <p class="label">【Partial Schema Output / 正文可截图：AI Chat and Community Tables】</p>
-        <pre>ChatSessions(
-  session_id PK,
-  user_id FK -&gt; Users.user_id,
-  active_pet_id FK -&gt; Pets.pet_id,
-  title,
-  assistant_avatar_id,
-  created_at,
-  updated_at
-)
-
-ChatMessages(
-  message_id PK,
-  session_id FK -&gt; ChatSessions.session_id,
-  role,
-  content,
-  model_name,
-  created_at
-)
-
-CommunityPosts(
-  post_id PK,
-  user_id FK -&gt; Users.user_id,
-  pet_id FK -&gt; Pets.pet_id NULL,
-  title,
-  body,
-  image_url,
-  like_count,
-  created_at
-)
-
-CommunityComments(
-  comment_id PK,
-  post_id FK -&gt; CommunityPosts.post_id,
-  user_id FK -&gt; Users.user_id,
-  body,
-  created_at
-)</pre>
-      </div>
-
-      <div class="block code">
-        <p class="label">【Partial Schema Output / 正文可截图：Shop and Subscription Tables】</p>
-        <pre>Products(
-  product_id PK,
-  name,
-  category,
-  description,
-  price,
-  image_url,
-  stock_quantity,
-  is_active
-)
-
-Orders(
-  order_id PK,
-  user_id FK -&gt; Users.user_id,
-  total_amount,
-  order_status,
-  payment_status,
-  created_at
-)
-
-OrderItems(
-  order_item_id PK,
-  order_id FK -&gt; Orders.order_id,
-  product_id FK -&gt; Products.product_id,
-  quantity,
-  unit_price
-)
-
-Subscriptions(
-  subscription_id PK,
-  user_id FK -&gt; Users.user_id,
-  plan_name,
-  price,
-  status,
-  start_date,
-  end_date,
-  ai_chat_limit,
-  device_history_days
-)</pre>
-      </div>
-
-      <div class="block final">
-        <p class="label">【Relationships / 正文可截图】</p>
-        <pre>Users 1:N Pets
-One user can manage multiple reptile pet profiles.
-
-Pets 1:N SensorReadings
-Each pet can have many time-series sensor readings.
-
-Pets 1:N Alerts
-Each pet can trigger many abnormal condition alerts.
-
-Users 1:N ChatSessions
-Each user can create multiple AI chat sessions.
-
-ChatSessions 1:N ChatMessages
-Each AI chat session contains multiple messages.
-
-Users 1:N CommunityPosts
-Each user can publish multiple community posts.
-
-CommunityPosts 1:N CommunityComments
-Each post can receive multiple comments.
-
-Users 1:N Orders
-Each user can place multiple shop orders.
-
-Orders 1:N OrderItems
-Each order can contain multiple products.
-
-Users 1:N Subscriptions
-Each user can have subscription history records.</pre>
+      <div class="block prompt">
+        <p class="label">【D2.2 Product Generation &amp; Prompt Engineering / 正文可截图】</p>
+        <p>For the database schema deliverable, we used a three-step prompting process instead of asking AI for the whole schema at once. The process starts with table definitions, then refines relationships and major entities, and finally asks AI to reorganize the ERD into clear visual clusters.</p>
       </div>
 
       <div class="block prompt">
-        <p class="label">【Refinement Prompt / 正文可截图】</p>
-        <p>The first schema is useful, but please refine it to better match the current ReptiMind prototype. The prototype includes custom pets, deleted built-in pet records, chat history, alert inbox, local fallback AI replies, product shop, and floating assistant sessions. Please explain which tables are essential for the current prototype and which tables are for future commercial scaling.</p>
+        <p class="label">【Prompt 1: Initial Table Definitions / 正文可截图】</p>
+        <p>We are app developers building an AI-powered exotic reptile care app called ReptiMind. Please design the first version of a production-ready relational database schema for the app.</p>
+        <p>Focus first on table definitions. The app should support users, reptile pet profiles, sensor readings, alerts, AI chat sessions, chat messages, community posts, community comments, shop products, orders, order items, and premium subscriptions.</p>
+        <p>For each table, provide its purpose, primary key, foreign keys, and representative fields. Do not create the ERD yet; start with the table design.</p>
+      </div>
+
+      <div class="block raw">
+        <p class="label">【AI Output 1: Table Definition Draft / Appendix 可截图】</p>
+        <p>The first schema draft should contain 12 tables. The tables can be grouped by business function: user and pet care, monitoring and AI, community, and shop/subscription features.</p>
+        <pre>Users(user_id PK, username, email, password_hash, preferred_unit, push_enabled)
+Pets(pet_id PK, user_id FK, name, species, habitat, condition_label, activity_score)
+SensorReadings(reading_id PK, pet_id FK, temperature_c, humidity_percent, uvb_uvi, recorded_at)
+Alerts(alert_id PK, pet_id FK, user_id FK, title, message, severity, source, is_read)
+ChatSessions(session_id PK, user_id FK, active_pet_id FK, title, assistant_avatar_id)
+ChatMessages(message_id PK, session_id FK, role, content, model_name)
+CommunityPosts(post_id PK, user_id FK, pet_id FK NULL, title, body, image_url)
+CommunityComments(comment_id PK, post_id FK, user_id FK, body)
+Products(product_id PK, name, category, description, price, stock_quantity)
+Orders(order_id PK, user_id FK, total_amount, order_status, payment_status)
+OrderItems(order_item_id PK, order_id FK, product_id FK, quantity, unit_price)
+Subscriptions(subscription_id PK, user_id FK, plan_name, price, status, ai_chat_limit)</pre>
       </div>
 
       <div class="block explain">
-        <p class="label">【Explanation of Refinements Made / 正文可截图】</p>
-        <p>After reviewing the first schema, we refined it into two levels. The essential prototype-level tables are Users, Pets, SensorReadings, Alerts, ChatSessions, and ChatMessages because they directly correspond to ReptiMind's dashboard, alert inbox, custom pet profiles, and AI chat history. The commercial expansion tables are Products, Orders, OrderItems, CommunityPosts, CommunityComments, and Subscriptions because they support future monetization, community engagement, and scaling.</p>
-        <p>This refinement makes the schema more realistic. It acknowledges that our current app uses mock data and local JSON files, while still showing how the same data objects can be migrated into a relational database for a production version.</p>
+        <p class="label">【Explanation 1 / 正文可截图】</p>
+        <p>My goal in the first prompt was to convert the app features into database entities. I asked for table definitions before the ERD because the schema needed a stable list of tables and fields first. From this output, we kept the 12-table structure because it covered the final prototype features: pet profiles, monitoring data, alerts, AI chat, community, shop, and subscriptions.</p>
+      </div>
+
+      <div class="block prompt">
+        <p class="label">【Prompt 2: Relationship Refinement / 正文可截图】</p>
+        <p>The initial table list is useful. Please refine it by adding relationship mapping, cardinality, and foreign key references.</p>
+        <p>Also identify the major entity tables that carry the core business data of ReptiMind. Separate core monitoring tables from future commercial expansion tables, so the schema can explain both the current prototype and future scaling.</p>
+      </div>
+
+      <div class="block raw">
+        <p class="label">【AI Output 2: Relationship Mapping and Major Entities / Appendix 可截图】</p>
+        <p>The core relationships should connect users to pets, pets to readings and alerts, users to chat sessions, chat sessions to messages, users to community posts, posts to comments, and users to orders and subscriptions.</p>
+        <pre>Users 1:N Pets
+Pets 1:N SensorReadings
+Pets 1:N Alerts
+Users 1:N ChatSessions
+ChatSessions 1:N ChatMessages
+Users 1:N CommunityPosts
+CommunityPosts 1:N CommunityComments
+Users 1:N Orders
+Orders 1:N OrderItems
+Products 1:N OrderItems
+Users 1:N Subscriptions</pre>
+        <p>Major entity tables: Users, Pets, SensorReadings, Alerts, ChatSessions/ChatMessages, CommunityPosts, Products/Orders/OrderItems.</p>
+      </div>
+
+      <div class="block explain">
+        <p class="label">【Explanation 2 / 正文可截图】</p>
+        <p>My goal in the second prompt was to make the schema more than a list of tables. I asked AI to define cardinality and foreign key references because the report needed to show how data integrity would be maintained. This refinement helped us produce the relationship mapping table and the major entity table summary.</p>
+      </div>
+
+      <div class="block prompt">
+        <p class="label">【Prompt 3: ERD Refinement / 正文可截图】</p>
+        <p>Please generate a clear ERD structure for the ReptiMind database based on the refined 12-table schema.</p>
+        <p>Organize the ERD into four clusters: User &amp; Pet Care, Monitoring &amp; AI, Community, and Products &amp; Orders. The ERD should be easy to explain in a report, with cluster names, table names, primary keys, foreign keys, and the most important fields.</p>
+      </div>
+
+      <div class="block raw">
+        <p class="label">【AI Output 3: ERD Cluster Plan / Appendix 可截图】</p>
+        <p>The ERD should be organized into four clusters to improve readability:</p>
+        <pre>User & Pet Care Cluster:
+- Users
+- Pets
+- Subscriptions
+
+Monitoring & AI Cluster:
+- SensorReadings
+- Alerts
+- ChatSessions
+- ChatMessages
+
+Community Cluster:
+- CommunityPosts
+- CommunityComments
+
+Products & Orders Cluster:
+- Products
+- Orders
+- OrderItems</pre>
+        <p>This grouping separates user ownership, care monitoring, social interaction, and commerce. It also makes the ERD easier to read than one dense diagram containing all tables in a single cluster.</p>
+      </div>
+
+      <div class="block explain">
+        <p class="label">【Explanation 3 / 正文可截图】</p>
+        <p>My goal in the third prompt was to turn the refined schema into a report-friendly ERD. The first two steps gave us the tables and relationships, but the diagram still needed a clear visual structure. We used the four-cluster output because it matched ReptiMind's product logic and made the final ERD easier to explain.</p>
       </div>
 
       <div class="block final">
         <p class="label">【Final Product Connection / 正文可截图】</p>
-        <p>The schema maps directly to the final ReptiMind prototype: pet data in <code>mockData.js</code> maps to Pets and SensorReadings; generated alerts in <code>App.jsx</code> map to Alerts; chat sessions in <code>Chat.jsx</code> and <code>server.js</code> map to ChatSessions and ChatMessages; shop products map to Products; and profile/premium settings map to Users and Subscriptions.</p>
+        <p>The final database product was created from these three prompt steps. The table definition prompt produced the 12-table schema; the relationship refinement prompt produced the relationship mapping and major entity tables; and the ERD refinement prompt produced the four-cluster ERD used in the final product section.</p>
       </div>
     </section>
 

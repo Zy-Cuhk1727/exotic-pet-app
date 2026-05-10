@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ReptiMind Complete AI Records Archive</title>
+  <style>
+    :root {
+      --ink: #202123;
+      --muted: #62646b;
+      --line: #dedede;
+      --soft: #f7f7f8;
+      --prompt: #eef5ff;
+      --output: #f2f8f2;
+      --note: #fff7df;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #ffffff;
+      color: var(--ink);
+      font-family: Arial, "Microsoft YaHei", sans-serif;
+      font-size: 16px;
+      line-height: 1.62;
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 36px 24px 80px;
+    }
+
+    section,
+    .cover {
+      border-bottom: 1px solid var(--line);
+      padding: 28px 0;
+    }
+
+    h1,
+    h2,
+    h3 {
+      line-height: 1.22;
+      margin: 0 0 12px;
+    }
+
+    h1 {
+      font-size: 31px;
+    }
+
+    h2 {
+      font-size: 24px;
+      margin-top: 6px;
+    }
+
+    h3 {
+      font-size: 18px;
+      margin-top: 20px;
+    }
+
+    p {
+      margin: 8px 0 12px;
+    }
+
+    ul {
+      margin: 8px 0 16px 22px;
+      padding: 0;
+    }
+
+    li {
+      margin: 4px 0;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin: 14px 0;
+      width: 100%;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--soft);
+    }
+
+    pre {
+      background: #f3f3f3;
+      border: 1px solid #dfdfdf;
+      border-radius: 8px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      margin: 10px 0 0;
+      overflow: auto;
+      padding: 14px;
+      white-space: pre-wrap;
+    }
+
+    .tag {
+      background: #202123;
+      border-radius: 999px;
+      color: #ffffff;
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+      padding: 5px 10px;
+      text-transform: uppercase;
+    }
+
+    .block {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      margin: 14px 0;
+      padding: 14px 16px;
+    }
+
+    .prompt {
+      background: var(--prompt);
+    }
+
+    .output {
+      background: var(--output);
+    }
+
+    .note {
+      background: var(--note);
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      margin: 0 0 8px;
+      text-transform: uppercase;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    a {
+      color: #1d5f9f;
+    }
+
+    @media print {
+      body {
+        font-size: 12pt;
+      }
+
+      main {
+        max-width: none;
+        padding: 0.5in;
+      }
+
+      section {
+        break-inside: avoid;
+      }
+
+      .page-break {
+        break-before: page;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="cover">
+      <h1>ReptiMind AI Records Archive</h1>
+      <p class="small">Appendix-ready consolidated record for the ReptiMind exotic pet care prototype.</p>
+      <div class="block note">
+        <p class="label">Record Note</p>
+        <p>This archive consolidates the saved partial AI prompt records and reconstructs representative raw outputs from the final prototype, the retained prompt pages, and the project files. It is intended to document the AI-assisted development process for the appendix. The two saved partial pages remain the source pages for detailed screenshots:</p>
+        <ul>
+          <li><a href="./app-ai-records.html">App Development Prompt Records</a></li>
+          <li><a href="./database-schema-records.html">Database Schema Records</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <section>
+      <span class="tag">Overview</span>
+      <h2>AI Use Summary</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Project Part</th>
+            <th>AI Task</th>
+            <th>Output Used in Prototype / Report</th>
+            <th>Human Refinement</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Product concept</td>
+            <td>Generate an app concept for exotic pet care with monitoring, alerts, AI chat, community, and shop functions.</td>
+            <td>Feature scope, navigation structure, and module list.</td>
+            <td>Selected functions that matched the MIS2011 project and removed overly complex features.</td>
+          </tr>
+          <tr>
+            <td>Frontend development</td>
+            <td>Recommend React/Vite structure and generate page-level component drafts.</td>
+            <td>Dashboard, care, devices, alerts, camera, community, shop, chat, premium, and profile pages.</td>
+            <td>Adjusted UI copy, styling, sample data, and navigation to match the final ReptiMind prototype.</td>
+          </tr>
+          <tr>
+            <td>AI chat</td>
+            <td>Create pet-context prompts, quick questions, fallback replies, and local chat history behavior.</td>
+            <td>Chat page, floating assistant logic, backend chat endpoint, and system prompt.</td>
+            <td>Added safety wording and prototype fallback behavior when live API access is unavailable.</td>
+          </tr>
+          <tr>
+            <td>Database schema</td>
+            <td>Convert app functions into tables, relationships, ERD clusters, and table definitions.</td>
+            <td>12-table schema, major entity table, relationship mapping, and ERD explanation.</td>
+            <td>Reorganized tables around users, pets, monitoring, AI chat, community, shop, and subscription modules.</td>
+          </tr>
+          <tr>
+            <td>Report writing</td>
+            <td>Draft explanations for AI usage, product generation, refinement, and final product connection.</td>
+            <td>Prompt engineering explanation and appendix captions.</td>
+            <td>Edited wording to align with the actual prototype and course deliverable format.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="page-break">
+      <span class="tag">Raw Record 1</span>
+      <h2>Product Concept and Technical Structure</h2>
+      <div class="block prompt">
+        <p class="label">Prompt Used</p>
+        <p>We are building a MIS project prototype called ReptiMind for exotic pet owners. Please recommend the most suitable technology stack and app structure. The app should include a home dashboard, pet health monitoring, temperature and humidity data, feeding reminders, AI chat, alerts, device controls, camera preview, community posts, shop, premium subscription, and user profile. Please explain why the stack is suitable and provide a modular file structure.</p>
+      </div>
+      <div class="block output">
+        <p class="label">Representative Raw AI Output</p>
+        <p>For a prototype with many interactive pages, React with Vite is a strong choice because it supports fast development, component-based UI, simple routing, and easy deployment. The frontend can hold mock data for the dashboard, monitoring metrics, alerts, community posts, and shop products. A lightweight Node.js server can be added later for AI chat calls and local JSON persistence.</p>
+        <p>The recommended structure is:</p>
+        <pre>exotic-pet-app/
+  public/
+    pets/
+    shop/
+    avatars/
+    ai-records/
+  src/
+    components/
+      FloatingAssistant.jsx
+    data/
+      mockData.js
+      liveSimulator.js
+    pages/
+      Dashboard.jsx
+      Care.jsx
+      Devices.jsx
+      Alerts.jsx
+      Camera.jsx
+      Chat.jsx
+      Community.jsx
+      Shop.jsx
+      Premium.jsx
+      Profile.jsx
+    App.jsx
+    App.css
+    main.jsx
+  server.js
+  package.json</pre>
+        <p>The app should start as a frontend-first prototype so the team can demonstrate business value and user workflows. Backend integration can then focus only on the AI chat and local data storage instead of slowing down the whole prototype.</p>
+      </div>
+      <p class="small">Compatible saved partial page: App Development Prompt Records, Prompt 1.</p>
+    </section>
+
+    <section class="page-break">
+      <span class="tag">Raw Record 2</span>
+      <h2>Initial React/Vite App Generation</h2>
+      <div class="block prompt">
+        <p class="label">Prompt Used</p>
+        <p>Please generate the initial React/Vite app skeleton for ReptiMind. Create a main app shell with navigation, separate page components, mock reptile pet data, and routes for dashboard, devices, care, alerts, camera, community, shop, chat, premium, and profile. Keep the code readable and suitable for a student prototype.</p>
+      </div>
+      <div class="block output">
+        <p class="label">Representative Raw AI Output</p>
+        <p>The first implementation should define all major routes and keep each product feature in a separate file. This allows the team to refine each module independently while keeping the navigation consistent.</p>
+        <pre>const navItems = [
+  { path: "/", label: "Dashboard" },
+  { path: "/care", label: "Care" },
+  { path: "/devices", label: "Devices" },
+  { path: "/alerts", label: "Alerts" },
+  { path: "/camera", label: "Camera" },
+  { path: "/community", label: "Community" },
+  { path: "/shop", label: "Shop" },
+  { path: "/chat", label: "AI Chat" },
+  { path: "/premium", label: "Premium" },
+  { path: "/user", label: "Profile" },
+];</pre>
+        <p>Sample pet data should include species, age, habitat readings, feeding schedule, enclosure status, and alert state. This data will drive the dashboard, alerts page, care recommendations, AI chat context, and device simulation.</p>
+      </div>
+      <p class="small">Compatible saved partial page: App Development Prompt Records, Prompt 2.</p>
+    </section>
+
+    <section class="page-break">
+      <span class="tag">Raw Record 3</span>
+      <h2>Dashboard, Sensor Data, and Alerts</h2>
+      <div class="block prompt">
+        <p class="label">Prompt Used</p>
+        <p>Refine the ReptiMind dashboard so it supports multiple reptile pets, each with temperature, humidity, lighting, feeding schedule, recent activity, and alerts. Generate structured sample data and reusable alert logic. The dashboard should look like a real monitoring product instead of a static landing page.</p>
+      </div>
+      <div class="block output">
+        <p class="label">Representative Raw AI Output</p>
+        <p>Use structured pet objects so the same data can support the dashboard, AI assistant, devices page, and alert center. Alerts should be derived from sensor readings and care schedules rather than written as unrelated text.</p>
+        <pre>export const pets = [
+  {
+    id: "vulkan",
+    name: "Vulkan",
+    species: "Bearded Dragon",
+    habitat: {
+      temperature: 34.2,
+      humidity: 38,
+      uvbStatus: "On schedule",
+      baskingZone: "High"
+    },
+    feeding: {
+      nextMeal: "Today 18:30",
+      diet: "Dubia roaches and greens"
+    },
+    alerts: [
+      {
+        type: "temperature",
+        severity: "warning",
+        message: "Basking zone reached 34.2C. Lower heat lamp output by 10%.",
+        action: "Reduce heat lamp output"
+      }
+    ]
+  }
+];</pre>
+        <p>The dashboard should render pet cards, metric cards, care reminders, and alert summaries. Use color and labels to show whether a reading is normal, needs attention, or is urgent.</p>
+      </div>
+      <p class="small">Compatible saved partial page: App Development Prompt Records, Prompt 3.</p>
+    </section>
+
+    <section class="page-break">
+      <span class="tag">Raw Record 4</span>
+      <h2>AI Chat with Pet Context</h2>
+      <div class="block prompt">
+        <p class="label">Prompt Used</p>
+        <p>Please create the logic for a ReptiMind AI chat feature. The assistant should receive selected pet context, current temperature and humidity, feeding schedule, care alerts, and user question. Add quick prompts for feeding, humidity, temperature, and enclosure checks. Also provide fallback demo replies when the backend or AI API is unavailable.</p>
+      </div>
+      <div class="block output">
+        <p class="label">Representative Raw AI Output</p>
+        <p>The AI chat should not send only the user's question. It should build a context object from the selected pet and current app readings, then send that context to the backend so the answer feels specific to the pet.</p>
+        <pre>export function buildAppContext(selectedPet) {
+  if (!selectedPet) return null;
+
+  return {
+    petName: selectedPet.name,
+    species: selectedPet.species,
+    temperature: selectedPet.habitat?.temperature,
+    humidity: selectedPet.habitat?.humidity,
+    feeding: selectedPet.feeding,
+    alerts: selectedPet.alerts || [],
+  };
+}
+
+export const quickPrompts = [
+  "Is the current humidity safe?",
+  "What should I feed today?",
+  "How should I adjust the temperature?",
+  "Do any alerts need immediate action?"
+];</pre>
+        <p>Fallback replies should be transparent that they are prototype guidance. They can explain likely next steps, such as checking the hygrometer, reviewing the species care range, adjusting misting, and contacting a reptile veterinarian for urgent symptoms.</p>
+      </div>
+      <p class="small">Compatible saved partial page: App Development Prompt Records, Prompt 4.</p>
+    </section>
+
+    <section class="page-break">
+      <span class="tag">Raw Record 5</span>
+      <h2>Backend API and DeepSeek Integration</h2>
+      <div class="block prompt">
+        <p class="label">Prompt Used</p>
+        <p>Please provide a simple Node.js backend for ReptiMind. It should expose an API endpoint for AI chat, read the DeepSeek API key from environment variables, send a system prompt defining ReptiMind as an exotic pet care assistant, include app context, return the assistant answer to the frontend, and save local chat sessions in JSON files for the prototype.</p>
+      </div>
+      <div class="block output">
+        <p class="label">Representative Raw AI Output</p>
+        <p>The backend can remain lightweight because the prototype does not require a production database. It should focus on CORS, JSON request handling, context normalization, the chat endpoint, fallback behavior, and local file persistence.</p>
+        <pre>const systemPrompt = `
+You are ReptiMind, an assistant for exotic pet care.
+Use the provided pet context when available.
+Give practical husbandry guidance about habitat, feeding, humidity, lighting, and monitoring.
+Do not diagnose diseases.
+For urgent symptoms, recommend contacting a qualified reptile veterinarian.
+`;
+
+app.post("/api/chat", async (req, res) => {
+  const { message, appContext } = req.body;
+  const contextPrompt = formatAppContext(appContext);
+
+  const messages = [
+    { role: "system", content: systemPrompt },
+    ...(contextPrompt ? [{ role: "system", content: contextPrompt }] : []),
+    { role: "user", content: message }
+  ];
+
+  // Call model API when configured, otherwise return a prototype fallback reply.
+});</pre>
+        <p>For the student prototype, this backend demonstrates how a real AI assistant could be integrated while still allowing the app to function during presentations without a live model call.</p>
+      </div>
+      <p class="small">Compatible saved partial page: App Development Prompt Records, Prompt 5.</p>
+    </section>
+
+    <section class="page-break">
+      <span class="tag">Raw Record 6</span>
+      <h2>Database Schema Table Definitions</h2>
+      <div class="block prompt">
+        <p class="label">Prompt Used</p>
+        <p>Based on the ReptiMind app features, create a database schema for a production version. Include users, pets, species information, sensor devices, sensor readings, alerts, care tasks, AI chat sessions, community posts, comments, products, orders, and subscriptions. Provide table names, primary keys, important fields, and foreign keys.</p>
+      </div>
+      <div class="block output">
+        <p class="label">Representative Raw AI Output</p>
+        <p>A production data model should separate identity, pet ownership, monitoring, AI interaction, social content, commerce, and subscription data. A 12-table structure is sufficient for the report while still covering the full app scope.</p>
+        <pre>Users(user_id PK, name, email, password_hash, role, created_at)
+Pets(pet_id PK, user_id FK, species_id FK, name, age, sex, image_url, notes)
+Species(species_id PK, common_name, scientific_name, ideal_temp_min, ideal_temp_max, ideal_humidity_min, ideal_humidity_max)
+Devices(device_id PK, pet_id FK, device_type, device_name, status, last_sync_at)
+SensorReadings(reading_id PK, device_id FK, pet_id FK, temperature, humidity, uvb_level, recorded_at)
+Alerts(alert_id PK, pet_id FK, reading_id FK, severity, alert_type, message, resolved_at)
+CareTasks(task_id PK, pet_id FK, task_type, due_time, status, completed_at)
+ChatSessions(session_id PK, user_id FK, pet_id FK, title, created_at)
+ChatMessages(message_id PK, session_id FK, sender, content, created_at)
+CommunityPosts(post_id PK, user_id FK, pet_id FK, caption, image_url, created_at)
+Products(product_id PK, name, category, price, stock_quantity, image_url)
+Subscriptions(subscription_id PK, user_id FK, plan_name, status, start_date, renewal_date)</pre>
+      </div>
+      <p class="small">Compatible saved partial page: Database Schema Records, Prompt 1.</p>
+    </section>
+
+    <section class="page-break">
+      <span class="tag">Raw Record 7</span>
+      <h2>Database Relationships and Major Entities</h2>
+      <div class="block prompt">
+        <p class="label">Prompt Used</p>
+        <p>Please refine the ReptiMind database schema by explaining the major entities, one-to-many and many-to-one relationships, and foreign key references. Make sure the schema supports pet monitoring, alerts, AI chat history, community posts, product browsing, orders, and subscriptions.</p>
+      </div>
+      <div class="block output">
+        <p class="label">Representative Raw AI Output</p>
+        <p>The central relationship is Users to Pets. One user can own many pets, and each pet can have many devices, readings, alerts, and care tasks. AI chat sessions can optionally connect to a specific pet so the assistant's advice can be reviewed later.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Relationship</th>
+              <th>Cardinality</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Users to Pets</td>
+              <td>One-to-many</td>
+              <td>One owner can manage multiple exotic pets.</td>
+            </tr>
+            <tr>
+              <td>Pets to SensorReadings</td>
+              <td>One-to-many</td>
+              <td>Each pet has a history of monitoring readings.</td>
+            </tr>
+            <tr>
+              <td>SensorReadings to Alerts</td>
+              <td>One-to-many / optional</td>
+              <td>Abnormal readings can trigger alert records.</td>
+            </tr>
+            <tr>
+              <td>Users to ChatSessions</td>
+              <td>One-to-many</td>
+              <td>Each user can save AI conversations.</td>
+            </tr>
+            <tr>
+              <td>Users to CommunityPosts</td>
+              <td>One-to-many</td>
+              <td>Users can share pet updates in the community.</td>
+            </tr>
+            <tr>
+              <td>Users to Subscriptions</td>
+              <td>One-to-many</td>
+              <td>Subscription records track premium plan status.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small">Compatible saved partial page: Database Schema Records, Prompt 2.</p>
+    </section>
+
+    <section class="page-break">
+      <span class="tag">Raw Record 8</span>
+      <h2>ERD Cluster Refinement</h2>
+      <div class="block prompt">
+        <p class="label">Prompt Used</p>
+        <p>Please reorganize the ReptiMind schema into an ERD that is easy to explain in a report. Group related tables into visual clusters and explain how the ERD supports the final app functions.</p>
+      </div>
+      <div class="block output">
+        <p class="label">Representative Raw AI Output</p>
+        <p>The ERD can be organized into four clusters:</p>
+        <ul>
+          <li><strong>User and pet profile cluster:</strong> Users, Pets, Species, Subscriptions.</li>
+          <li><strong>Monitoring and care cluster:</strong> Devices, SensorReadings, Alerts, CareTasks.</li>
+          <li><strong>AI assistant cluster:</strong> ChatSessions and ChatMessages.</li>
+          <li><strong>Community and commerce cluster:</strong> CommunityPosts, Products, Orders or shopping-related records.</li>
+        </ul>
+        <p>This clustering makes the database easier to read because it follows the app's user journey: create a profile, add pets, monitor care, ask AI questions, participate in community, and optionally purchase products or premium features.</p>
+      </div>
+      <p class="small">Compatible saved partial page: Database Schema Records, Prompt 3.</p>
+    </section>
+
+    <section class="page-break">
+      <span class="tag">Appendix Use</span>
+      <h2>Recommended Placement in Final PDF</h2>
+      <ul>
+        <li>Use the two saved partial pages for close-up screenshots of prompts, key outputs, and first-person refinement explanations.</li>
+        <li>Use this consolidated archive when the appendix needs a broader record of AI-assisted development.</li>
+        <li>In the appendix caption, describe these as consolidated and representative AI records based on saved prompt pages and final project files.</li>
+        <li>Include the GitHub repository link in the main PDF if the prototype is submitted as an optional supplementary prototype.</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

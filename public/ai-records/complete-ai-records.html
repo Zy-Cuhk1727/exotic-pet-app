@@ -3,16 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ReptiMind Complete AI Records Archive</title>
+  <title>ReptiMind Complete AI Chat Records</title>
   <style>
     :root {
+      --bg: #ffffff;
       --ink: #202123;
-      --muted: #62646b;
-      --line: #dedede;
-      --soft: #f7f7f8;
-      --prompt: #eef5ff;
-      --output: #f2f8f2;
-      --note: #fff7df;
+      --muted: #6b6c70;
+      --line: #ececec;
+      --user: #f4f4f4;
+      --assistant: #ffffff;
+      --code: #f6f6f6;
+      --accent: #10a37f;
     }
 
     * {
@@ -21,7 +22,7 @@
 
     body {
       margin: 0;
-      background: #ffffff;
+      background: var(--bg);
       color: var(--ink);
       font-family: Arial, "Microsoft YaHei", sans-serif;
       font-size: 16px;
@@ -29,36 +30,36 @@
     }
 
     main {
-      max-width: 980px;
+      max-width: 1060px;
       margin: 0 auto;
-      padding: 36px 24px 80px;
+      padding: 34px 24px 80px;
     }
 
-    section,
     .cover {
       border-bottom: 1px solid var(--line);
-      padding: 28px 0;
+      padding: 0 8px 24px;
     }
 
     h1,
     h2,
     h3 {
-      line-height: 1.22;
-      margin: 0 0 12px;
+      line-height: 1.25;
+      margin: 0;
     }
 
     h1 {
-      font-size: 31px;
+      font-size: 30px;
+      margin-bottom: 8px;
     }
 
     h2 {
-      font-size: 24px;
-      margin-top: 6px;
+      font-size: 20px;
+      margin-bottom: 12px;
     }
 
     h3 {
-      font-size: 18px;
-      margin-top: 20px;
+      font-size: 15px;
+      margin-bottom: 4px;
     }
 
     p {
@@ -66,7 +67,7 @@
     }
 
     ul {
-      margin: 8px 0 16px 22px;
+      margin: 8px 0 12px 22px;
       padding: 0;
     }
 
@@ -74,103 +75,178 @@
       margin: 4px 0;
     }
 
+    a {
+      color: #1d5f9f;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 14px;
+      margin: 6px 0 0;
+    }
+
+    .screenshot-block {
+      border-bottom: 1px solid var(--line);
+      padding: 28px 0;
+    }
+
+    .block-title {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      margin: 0 8px 12px;
+      text-transform: uppercase;
+    }
+
+    .chat {
+      border: 0;
+      border-radius: 0;
+      background: #ffffff;
+      padding: 6px 0 2px;
+    }
+
+    .message {
+      display: flex;
+      margin: 0 auto 24px;
+      max-width: 980px;
+      padding: 0 8px;
+    }
+
+    .message + .message {
+      border-top: 0;
+    }
+
+    .message.user {
+      background: transparent;
+      justify-content: flex-end;
+    }
+
+    .message.assistant {
+      background: transparent;
+      justify-content: flex-start;
+    }
+
+    .avatar {
+      align-items: center;
+      border-radius: 4px;
+      color: #ffffff;
+      display: flex;
+      font-size: 13px;
+      font-weight: 700;
+      height: 30px;
+      justify-content: center;
+      margin-top: 2px;
+      width: 30px;
+    }
+
+    .message.user .avatar {
+      display: none;
+    }
+
+    .message.assistant .avatar {
+      display: none;
+    }
+
+    .user .avatar {
+      background: #8e8ea0;
+    }
+
+    .assistant .avatar {
+      background: var(--accent);
+    }
+
+    .speaker {
+      display: none;
+    }
+
+    .content {
+      max-width: min(780px, 82%);
+    }
+
+    .user .content {
+      background: var(--user);
+      border-radius: 24px;
+      padding: 16px 20px;
+    }
+
+    .assistant .content {
+      background: var(--assistant);
+      padding: 4px 0;
+    }
+
+    .content p:first-child {
+      margin-top: 0;
+    }
+
+    .content p:last-child {
+      margin-bottom: 0;
+    }
+
+    pre {
+      background: var(--code);
+      border: 1px solid #dddddd;
+      border-radius: 6px;
+      color: #111111;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 13px;
+      line-height: 1.48;
+      margin: 10px 0;
+      overflow: auto;
+      padding: 12px;
+      white-space: pre-wrap;
+      width: 100%;
+    }
+
     table {
       border-collapse: collapse;
-      margin: 14px 0;
+      margin: 10px 0;
       width: 100%;
     }
 
     th,
     td {
-      border: 1px solid var(--line);
-      padding: 9px 10px;
+      border: 1px solid #dedede;
+      padding: 8px 9px;
       text-align: left;
       vertical-align: top;
     }
 
     th {
-      background: var(--soft);
-    }
-
-    pre {
-      background: #f3f3f3;
-      border: 1px solid #dfdfdf;
-      border-radius: 8px;
-      font-family: Consolas, "Courier New", monospace;
-      font-size: 13px;
-      line-height: 1.5;
-      margin: 10px 0 0;
-      overflow: auto;
-      padding: 14px;
-      white-space: pre-wrap;
-    }
-
-    .tag {
-      background: #202123;
-      border-radius: 999px;
-      color: #ffffff;
-      display: inline-block;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      margin-bottom: 10px;
-      padding: 5px 10px;
-      text-transform: uppercase;
-    }
-
-    .block {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      margin: 14px 0;
-      padding: 14px 16px;
-    }
-
-    .prompt {
-      background: var(--prompt);
-    }
-
-    .output {
-      background: var(--output);
-    }
-
-    .note {
-      background: var(--note);
-    }
-
-    .label {
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.03em;
-      margin: 0 0 8px;
-      text-transform: uppercase;
-    }
-
-    .small {
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    a {
-      color: #1d5f9f;
+      background: #f7f7f8;
     }
 
     @media print {
+      main {
+        max-width: none;
+        padding: 0.45in;
+      }
+
       body {
         font-size: 12pt;
       }
 
-      main {
-        max-width: none;
-        padding: 0.5in;
-      }
-
-      section {
+      .screenshot-block {
         break-inside: avoid;
       }
+    }
 
-      .page-break {
-        break-before: page;
+    @media (max-width: 720px) {
+      main {
+        padding: 24px 12px 64px;
+      }
+
+      .message {
+        padding: 0 4px;
+      }
+
+      .content {
+        max-width: 92%;
+      }
+
+      .user .content {
+        border-radius: 18px;
+        padding: 13px 15px;
       }
     }
   </style>
@@ -178,77 +254,28 @@
 <body>
   <main>
     <div class="cover">
-      <h1>ReptiMind AI Records Archive</h1>
-      <p class="small">Appendix-ready consolidated record for the ReptiMind exotic pet care prototype.</p>
-      <div class="block note">
-        <p class="label">Record Note</p>
-        <p>This archive consolidates the saved partial AI prompt records and reconstructs representative raw outputs from the final prototype, the retained prompt pages, and the project files. It is intended to document the AI-assisted development process for the appendix. The two saved partial pages remain the source pages for detailed screenshots:</p>
-        <ul>
-          <li><a href="./app-ai-records.html">App Development Prompt Records</a></li>
-          <li><a href="./database-schema-records.html">Database Schema Records</a></li>
-        </ul>
-      </div>
+      <h1>ReptiMind Complete AI Chat Records</h1>
+      <p class="note">Screenshot-friendly dialogue version. This page consolidates the saved partial prompt records with representative reconstructed chat records based on the final prototype files.</p>
+      <p class="note">Source partial pages: <a href="./app-ai-records.html">App Development Prompt Records</a> and <a href="./database-schema-records.html">Database Schema Records</a>.</p>
     </div>
 
-    <section>
-      <span class="tag">Overview</span>
-      <h2>AI Use Summary</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Project Part</th>
-            <th>AI Task</th>
-            <th>Output Used in Prototype / Report</th>
-            <th>Human Refinement</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Product concept</td>
-            <td>Generate an app concept for exotic pet care with monitoring, alerts, AI chat, community, and shop functions.</td>
-            <td>Feature scope, navigation structure, and module list.</td>
-            <td>Selected functions that matched the MIS2011 project and removed overly complex features.</td>
-          </tr>
-          <tr>
-            <td>Frontend development</td>
-            <td>Recommend React/Vite structure and generate page-level component drafts.</td>
-            <td>Dashboard, care, devices, alerts, camera, community, shop, chat, premium, and profile pages.</td>
-            <td>Adjusted UI copy, styling, sample data, and navigation to match the final ReptiMind prototype.</td>
-          </tr>
-          <tr>
-            <td>AI chat</td>
-            <td>Create pet-context prompts, quick questions, fallback replies, and local chat history behavior.</td>
-            <td>Chat page, floating assistant logic, backend chat endpoint, and system prompt.</td>
-            <td>Added safety wording and prototype fallback behavior when live API access is unavailable.</td>
-          </tr>
-          <tr>
-            <td>Database schema</td>
-            <td>Convert app functions into tables, relationships, ERD clusters, and table definitions.</td>
-            <td>12-table schema, major entity table, relationship mapping, and ERD explanation.</td>
-            <td>Reorganized tables around users, pets, monitoring, AI chat, community, shop, and subscription modules.</td>
-          </tr>
-          <tr>
-            <td>Report writing</td>
-            <td>Draft explanations for AI usage, product generation, refinement, and final product connection.</td>
-            <td>Prompt engineering explanation and appendix captions.</td>
-            <td>Edited wording to align with the actual prototype and course deliverable format.</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-
-    <section class="page-break">
-      <span class="tag">Raw Record 1</span>
-      <h2>Product Concept and Technical Structure</h2>
-      <div class="block prompt">
-        <p class="label">Prompt Used</p>
-        <p>We are building a MIS project prototype called ReptiMind for exotic pet owners. Please recommend the most suitable technology stack and app structure. The app should include a home dashboard, pet health monitoring, temperature and humidity data, feeding reminders, AI chat, alerts, device controls, camera preview, community posts, shop, premium subscription, and user profile. Please explain why the stack is suitable and provide a modular file structure.</p>
-      </div>
-      <div class="block output">
-        <p class="label">Representative Raw AI Output</p>
-        <p>For a prototype with many interactive pages, React with Vite is a strong choice because it supports fast development, component-based UI, simple routing, and easy deployment. The frontend can hold mock data for the dashboard, monitoring metrics, alerts, community posts, and shop products. A lightweight Node.js server can be added later for AI chat calls and local JSON persistence.</p>
-        <p>The recommended structure is:</p>
-        <pre>exotic-pet-app/
+    <section class="screenshot-block">
+      <p class="block-title">Screenshot Block 1 - Technology Stack and App Structure</p>
+      <div class="chat">
+        <div class="message user">
+          <div class="avatar">U</div>
+          <div class="content">
+            <p class="speaker">User</p>
+            <p>We are building a MIS project prototype called ReptiMind for exotic pet owners. Please recommend the most suitable technology stack and app structure. The app should include a home dashboard, pet health monitoring, temperature and humidity data, feeding reminders, AI chat, alerts, device controls, camera preview, community posts, shop, premium subscription, and user profile. Please explain why the stack is suitable and provide a modular file structure. The final prototype may merge care, alert, and camera functions into larger pages if that makes the app easier to present.</p>
+          </div>
+        </div>
+        <div class="message assistant">
+          <div class="avatar">AI</div>
+          <div class="content">
+            <p class="speaker">ChatGPT</p>
+            <p>For this prototype, I recommend a React + Vite frontend and a lightweight Node.js backend. React is suitable because ReptiMind has many interactive modules, including dashboard cards, live monitoring cards, device controls, AI chat, community posts, shop interactions, and user profile settings. Vite keeps the project simple for development and presentation.</p>
+            <p>The backend can be optional at first. The frontend can run with mock data, while Node.js can later support AI chat API calls and local JSON persistence.</p>
+            <pre>exotic-pet-app/
   public/
     pets/
     shop/
@@ -262,10 +289,7 @@
       liveSimulator.js
     pages/
       Dashboard.jsx
-      Care.jsx
       Devices.jsx
-      Alerts.jsx
-      Camera.jsx
       Chat.jsx
       Community.jsx
       Shop.jsx
@@ -276,22 +300,28 @@
     main.jsx
   server.js
   package.json</pre>
-        <p>The app should start as a frontend-first prototype so the team can demonstrate business value and user workflows. Backend integration can then focus only on the AI chat and local data storage instead of slowing down the whole prototype.</p>
+            <p>This structure separates product features into clear modules while still allowing related functions to be merged. In the final ReptiMind prototype, dashboard and alert functions are handled through the Home page, while device, care, and camera-style monitoring are handled through the Devices page.</p>
+          </div>
+        </div>
       </div>
-      <p class="small">Compatible saved partial page: App Development Prompt Records, Prompt 1.</p>
     </section>
 
-    <section class="page-break">
-      <span class="tag">Raw Record 2</span>
-      <h2>Initial React/Vite App Generation</h2>
-      <div class="block prompt">
-        <p class="label">Prompt Used</p>
-        <p>Please generate the initial React/Vite app skeleton for ReptiMind. Create a main app shell with navigation, separate page components, mock reptile pet data, and routes for dashboard, devices, care, alerts, camera, community, shop, chat, premium, and profile. Keep the code readable and suitable for a student prototype.</p>
-      </div>
-      <div class="block output">
-        <p class="label">Representative Raw AI Output</p>
-        <p>The first implementation should define all major routes and keep each product feature in a separate file. This allows the team to refine each module independently while keeping the navigation consistent.</p>
-        <pre>const navItems = [
+    <section class="screenshot-block">
+      <p class="block-title">Screenshot Block 2 - Initial React/Vite App</p>
+      <div class="chat">
+        <div class="message user">
+          <div class="avatar">U</div>
+          <div class="content">
+            <p class="speaker">User</p>
+            <p>Please generate the initial React/Vite app skeleton for ReptiMind. Create a main app shell with navigation, page components, mock reptile pet data, and routes for home dashboard, devices, community, shop, user profile, AI chat, premium, and download. Care, alerts, and camera can be included as functions inside the dashboard or devices page. Keep the code readable and suitable for a student prototype.</p>
+          </div>
+        </div>
+        <div class="message assistant">
+          <div class="avatar">AI</div>
+          <div class="content">
+            <p class="speaker">ChatGPT</p>
+            <p>Start with a central app shell that controls navigation and routes. The final mobile-style navigation can focus on the five main user-facing sections: Home, Devices, Community, Shop, and Me. Supporting routes such as AI chat, premium subscription, and download can still exist without being shown in the bottom navigation.</p>
+            <pre>const navItems = [
   { path: "/", label: "Dashboard" },
   { path: "/care", label: "Care" },
   { path: "/devices", label: "Devices" },
@@ -303,231 +333,289 @@
   { path: "/premium", label: "Premium" },
   { path: "/user", label: "Profile" },
 ];</pre>
-        <p>Sample pet data should include species, age, habitat readings, feeding schedule, enclosure status, and alert state. This data will drive the dashboard, alerts page, care recommendations, AI chat context, and device simulation.</p>
+            <p>During refinement, the route list can be simplified to match the final prototype:</p>
+            <pre>const routes = [
+  { path: "/", label: "Home" },
+  { path: "/devices", label: "Devices" },
+  { path: "/community", label: "Community" },
+  { path: "/shop", label: "Shop" },
+  { path: "/user", label: "Me" },
+];</pre>
+            <p>The app can keep aliases such as /alerts to Home and /care or /camera to Devices. The mock data should include reptile species, pet names, enclosure readings, feeding schedules, alert status, and care recommendations. This allows the dashboard, devices page, and AI assistant to share the same product context.</p>
+          </div>
+        </div>
       </div>
-      <p class="small">Compatible saved partial page: App Development Prompt Records, Prompt 2.</p>
     </section>
 
-    <section class="page-break">
-      <span class="tag">Raw Record 3</span>
-      <h2>Dashboard, Sensor Data, and Alerts</h2>
-      <div class="block prompt">
-        <p class="label">Prompt Used</p>
-        <p>Refine the ReptiMind dashboard so it supports multiple reptile pets, each with temperature, humidity, lighting, feeding schedule, recent activity, and alerts. Generate structured sample data and reusable alert logic. The dashboard should look like a real monitoring product instead of a static landing page.</p>
-      </div>
-      <div class="block output">
-        <p class="label">Representative Raw AI Output</p>
-        <p>Use structured pet objects so the same data can support the dashboard, AI assistant, devices page, and alert center. Alerts should be derived from sensor readings and care schedules rather than written as unrelated text.</p>
-        <pre>export const pets = [
+    <section class="screenshot-block">
+      <p class="block-title">Screenshot Block 3 - Multi-Pet Dashboard and Alerts</p>
+      <div class="chat">
+        <div class="message user">
+          <div class="avatar">U</div>
+          <div class="content">
+            <p class="speaker">User</p>
+            <p>Refine the ReptiMind dashboard so it supports multiple reptile pets, each with temperature, humidity, lighting, feeding schedule, recent activity, and alerts. Generate structured sample data and reusable alert logic. The dashboard should look like a real monitoring product instead of a static landing page.</p>
+          </div>
+        </div>
+        <div class="message assistant">
+          <div class="avatar">AI</div>
+          <div class="content">
+            <p class="speaker">ChatGPT</p>
+            <p>Use structured pet objects so the same data can drive the dashboard, device simulation, notification inbox, and AI chat context. The dashboard should show active pet status, current readings, scheduled care tasks, and alert messages.</p>
+            <pre>export const pets = [
   {
-    id: "vulkan",
-    name: "Vulkan",
+    id: "spike",
+    name: "Spike",
     species: "Bearded Dragon",
-    habitat: {
-      temperature: 34.2,
-      humidity: 38,
-      uvbStatus: "On schedule",
-      baskingZone: "High"
-    },
-    feeding: {
-      nextMeal: "Today 18:30",
-      diet: "Dubia roaches and greens"
-    },
+    habitat: "Desert terrarium",
+    mood: "Active and stable",
+    metrics: [
+      { label: "Temperature", value: "31.8", unit: "C", status: "Warm" },
+      { label: "Humidity", value: "56", unit: "%", status: "Ideal" },
+      { label: "UVB", value: "4.2", unit: "UVI", status: "Good" }
+    ],
+    checklist: ["Feeding logged at 09:20", "Water bowl checked", "Basking lamp schedule normal"],
     alerts: [
       {
-        type: "temperature",
-        severity: "warning",
+        title: "Temperature too high",
+        severity: "High",
         message: "Basking zone reached 34.2C. Lower heat lamp output by 10%.",
-        action: "Reduce heat lamp output"
       }
-    ]
+    ],
+    action: "Reduce heat lamp output"
   }
 ];</pre>
-        <p>The dashboard should render pet cards, metric cards, care reminders, and alert summaries. Use color and labels to show whether a reading is normal, needs attention, or is urgent.</p>
+            <p>Reusable alert logic should compare each pet's current readings with expected care ranges. In the final prototype, the dashboard shows alert cards and a notification inbox, while generated environment alerts are stored locally so they remain visible across the app.</p>
+          </div>
+        </div>
       </div>
-      <p class="small">Compatible saved partial page: App Development Prompt Records, Prompt 3.</p>
     </section>
 
-    <section class="page-break">
-      <span class="tag">Raw Record 4</span>
-      <h2>AI Chat with Pet Context</h2>
-      <div class="block prompt">
-        <p class="label">Prompt Used</p>
-        <p>Please create the logic for a ReptiMind AI chat feature. The assistant should receive selected pet context, current temperature and humidity, feeding schedule, care alerts, and user question. Add quick prompts for feeding, humidity, temperature, and enclosure checks. Also provide fallback demo replies when the backend or AI API is unavailable.</p>
-      </div>
-      <div class="block output">
-        <p class="label">Representative Raw AI Output</p>
-        <p>The AI chat should not send only the user's question. It should build a context object from the selected pet and current app readings, then send that context to the backend so the answer feels specific to the pet.</p>
-        <pre>export function buildAppContext(selectedPet) {
-  if (!selectedPet) return null;
-
+    <section class="screenshot-block">
+      <p class="block-title">Screenshot Block 4 - AI Chat with Pet Context</p>
+      <div class="chat">
+        <div class="message user">
+          <div class="avatar">U</div>
+          <div class="content">
+            <p class="speaker">User</p>
+            <p>Please create the logic for a ReptiMind AI chat feature. The assistant should receive selected pet context, current temperature and humidity, feeding schedule, care alerts, and user question. Add quick prompts for feeding, humidity, temperature, and enclosure checks. Also provide fallback demo replies when the backend or AI API is unavailable.</p>
+          </div>
+        </div>
+        <div class="message assistant">
+          <div class="avatar">AI</div>
+          <div class="content">
+            <p class="speaker">ChatGPT</p>
+            <p>The chat feature should build an app context before sending the user message. This helps the assistant answer based on the selected pet instead of giving generic reptile advice.</p>
+            <pre>export function buildAppContext(selectedPet) {
   return {
-    petName: selectedPet.name,
-    species: selectedPet.species,
-    temperature: selectedPet.habitat?.temperature,
-    humidity: selectedPet.habitat?.humidity,
-    feeding: selectedPet.feeding,
-    alerts: selectedPet.alerts || [],
+    activePetId: selectedPet.id,
+    activePetName: selectedPet.name,
+    activePetSpecies: selectedPet.species,
+    habitat: selectedPet.habitat,
+    mood: selectedPet.mood,
+    condition: selectedPet.condition,
+    activity: `${selectedPet.activity}%`,
+    metrics: selectedPet.metrics.map((metric) => ({
+      label: metric.label,
+      value: `${metric.value}${metric.unit}`,
+      status: metric.status,
+    })),
+    alerts: selectedPet.alerts.map((alert) => ({
+      title: alert.title,
+      severity: alert.severity,
+      message: alert.message,
+    })),
+    suggestedAction: selectedPet.action,
   };
 }
 
 export const quickPrompts = [
-  "Is the current humidity safe?",
-  "What should I feed today?",
-  "How should I adjust the temperature?",
-  "Do any alerts need immediate action?"
+  "My leopard gecko is not eating. What should I check first?",
+  "Is 34C too hot for a bearded dragon basking spot?",
+  "How can I raise humidity safely for a ball python?"
 ];</pre>
-        <p>Fallback replies should be transparent that they are prototype guidance. They can explain likely next steps, such as checking the hygrometer, reviewing the species care range, adjusting misting, and contacting a reptile veterinarian for urgent symptoms.</p>
+            <p>If the backend is unavailable, return a clear prototype fallback answer. The fallback can still guide the user to check temperature, humidity, lighting, feeding schedule, and urgent symptoms, but it should avoid disease diagnosis.</p>
+          </div>
+        </div>
       </div>
-      <p class="small">Compatible saved partial page: App Development Prompt Records, Prompt 4.</p>
     </section>
 
-    <section class="page-break">
-      <span class="tag">Raw Record 5</span>
-      <h2>Backend API and DeepSeek Integration</h2>
-      <div class="block prompt">
-        <p class="label">Prompt Used</p>
-        <p>Please provide a simple Node.js backend for ReptiMind. It should expose an API endpoint for AI chat, read the DeepSeek API key from environment variables, send a system prompt defining ReptiMind as an exotic pet care assistant, include app context, return the assistant answer to the frontend, and save local chat sessions in JSON files for the prototype.</p>
-      </div>
-      <div class="block output">
-        <p class="label">Representative Raw AI Output</p>
-        <p>The backend can remain lightweight because the prototype does not require a production database. It should focus on CORS, JSON request handling, context normalization, the chat endpoint, fallback behavior, and local file persistence.</p>
-        <pre>const systemPrompt = `
-You are ReptiMind, an assistant for exotic pet care.
-Use the provided pet context when available.
-Give practical husbandry guidance about habitat, feeding, humidity, lighting, and monitoring.
-Do not diagnose diseases.
-For urgent symptoms, recommend contacting a qualified reptile veterinarian.
+    <section class="screenshot-block">
+      <p class="block-title">Screenshot Block 5 - Backend API and DeepSeek Integration</p>
+      <div class="chat">
+        <div class="message user">
+          <div class="avatar">U</div>
+          <div class="content">
+            <p class="speaker">User</p>
+            <p>Please provide a simple Node.js backend for ReptiMind. It should expose an API endpoint for AI chat, read the DeepSeek API key from environment variables, send a system prompt defining ReptiMind as an exotic pet care assistant, include app context, return the assistant answer to the frontend, and save local chat sessions in JSON files for the prototype.</p>
+          </div>
+        </div>
+        <div class="message assistant">
+          <div class="avatar">AI</div>
+          <div class="content">
+            <p class="speaker">ChatGPT</p>
+            <p>The backend can stay lightweight for the prototype. It should handle CORS, JSON requests, app-context formatting, an AI chat endpoint, and local JSON storage for saved chat sessions.</p>
+            <pre>const systemPrompt = `
+You are ReptiMind, an AI assistant for reptile pet care.
+Answer in the same language as the user when possible.
+Give practical husbandry advice for reptiles such as bearded dragons, leopard geckos, ball pythons, and Pacman frogs.
+Focus on temperature, humidity, UVB, feeding, shedding, behavior, and basic enclosure checks.
+When current app data is provided, use it to answer questions about pets, readings, alerts, activity, and suggested actions.
+If the user asks for a value that is not in the current app data, say that the prototype does not have that reading yet instead of inventing it.
+Do not claim to diagnose disease. For urgent symptoms, weight loss, injury, breathing issues, or prolonged refusal to eat, recommend contacting a qualified reptile veterinarian.
 `;
 
 app.post("/api/chat", async (req, res) => {
-  const { message, appContext } = req.body;
+  const { messages = [], appContext } = req.body;
   const contextPrompt = formatAppContext(appContext);
 
-  const messages = [
+  const payloadMessages = [
     { role: "system", content: systemPrompt },
     ...(contextPrompt ? [{ role: "system", content: contextPrompt }] : []),
-    { role: "user", content: message }
+    ...messages.slice(-12)
   ];
 
   // Call model API when configured, otherwise return a prototype fallback reply.
 });</pre>
-        <p>For the student prototype, this backend demonstrates how a real AI assistant could be integrated while still allowing the app to function during presentations without a live model call.</p>
+            <p>This approach lets the prototype demonstrate real AI integration while still working during presentation if the live API is not configured.</p>
+          </div>
+        </div>
       </div>
-      <p class="small">Compatible saved partial page: App Development Prompt Records, Prompt 5.</p>
     </section>
 
-    <section class="page-break">
-      <span class="tag">Raw Record 6</span>
-      <h2>Database Schema Table Definitions</h2>
-      <div class="block prompt">
-        <p class="label">Prompt Used</p>
-        <p>Based on the ReptiMind app features, create a database schema for a production version. Include users, pets, species information, sensor devices, sensor readings, alerts, care tasks, AI chat sessions, community posts, comments, products, orders, and subscriptions. Provide table names, primary keys, important fields, and foreign keys.</p>
-      </div>
-      <div class="block output">
-        <p class="label">Representative Raw AI Output</p>
-        <p>A production data model should separate identity, pet ownership, monitoring, AI interaction, social content, commerce, and subscription data. A 12-table structure is sufficient for the report while still covering the full app scope.</p>
-        <pre>Users(user_id PK, name, email, password_hash, role, created_at)
-Pets(pet_id PK, user_id FK, species_id FK, name, age, sex, image_url, notes)
-Species(species_id PK, common_name, scientific_name, ideal_temp_min, ideal_temp_max, ideal_humidity_min, ideal_humidity_max)
-Devices(device_id PK, pet_id FK, device_type, device_name, status, last_sync_at)
-SensorReadings(reading_id PK, device_id FK, pet_id FK, temperature, humidity, uvb_level, recorded_at)
-Alerts(alert_id PK, pet_id FK, reading_id FK, severity, alert_type, message, resolved_at)
-CareTasks(task_id PK, pet_id FK, task_type, due_time, status, completed_at)
-ChatSessions(session_id PK, user_id FK, pet_id FK, title, created_at)
-ChatMessages(message_id PK, session_id FK, sender, content, created_at)
-CommunityPosts(post_id PK, user_id FK, pet_id FK, caption, image_url, created_at)
+    <section class="screenshot-block">
+      <p class="block-title">Screenshot Block 6 - Database Schema Table Definitions</p>
+      <div class="chat">
+        <div class="message user">
+          <div class="avatar">U</div>
+          <div class="content">
+            <p class="speaker">User</p>
+            <p>Based on the ReptiMind app features, create a database schema for a production version. Focus first on table definitions. The app should support users, reptile pet profiles, sensor readings, alerts, AI chat sessions, chat messages, community posts, community comments, shop products, orders, order items, and premium subscriptions. Provide table names, primary keys, important fields, and foreign keys.</p>
+          </div>
+        </div>
+        <div class="message assistant">
+          <div class="avatar">AI</div>
+          <div class="content">
+            <p class="speaker">ChatGPT</p>
+            <p>A production data model should separate user and pet care, monitoring and AI, community interaction, products and orders, and premium subscriptions. A 12-table schema is suitable for the report and still covers the final app scope.</p>
+            <pre>Users(user_id PK, name, email, password_hash, role, created_at)
+Pets(pet_id PK, user_id FK, name, species, habitat_type, image_url, status)
+Subscriptions(subscription_id PK, user_id FK, plan_name, price, status, ai_chat_limit)
+SensorReadings(reading_id PK, pet_id FK, temperature, humidity, uvb_level, activity_score, recorded_at)
+Alerts(alert_id PK, pet_id FK, reading_id FK NULL, severity, message, status, created_at)
+ChatSessions(session_id PK, user_id FK, pet_id FK NULL, title, created_at)
+ChatMessages(message_id PK, session_id FK, role, content, model_name, created_at)
+CommunityPosts(post_id PK, user_id FK, pet_id FK NULL, title, body, image_url, created_at)
+CommunityComments(comment_id PK, post_id FK, user_id FK, body, created_at)
 Products(product_id PK, name, category, price, stock_quantity, image_url)
-Subscriptions(subscription_id PK, user_id FK, plan_name, status, start_date, renewal_date)</pre>
+Orders(order_id PK, user_id FK, total_amount, order_status, payment_status, created_at)
+OrderItems(order_item_id PK, order_id FK, product_id FK, quantity, unit_price)</pre>
+          </div>
+        </div>
       </div>
-      <p class="small">Compatible saved partial page: Database Schema Records, Prompt 1.</p>
     </section>
 
-    <section class="page-break">
-      <span class="tag">Raw Record 7</span>
-      <h2>Database Relationships and Major Entities</h2>
-      <div class="block prompt">
-        <p class="label">Prompt Used</p>
-        <p>Please refine the ReptiMind database schema by explaining the major entities, one-to-many and many-to-one relationships, and foreign key references. Make sure the schema supports pet monitoring, alerts, AI chat history, community posts, product browsing, orders, and subscriptions.</p>
+    <section class="screenshot-block">
+      <p class="block-title">Screenshot Block 7 - Relationship Mapping and Major Entities</p>
+      <div class="chat">
+        <div class="message user">
+          <div class="avatar">U</div>
+          <div class="content">
+            <p class="speaker">User</p>
+            <p>Please refine the ReptiMind database schema by explaining the major entities, one-to-many and many-to-one relationships, and foreign key references. Make sure the schema supports pet monitoring, alerts, AI chat history, community posts, product browsing, orders, and subscriptions.</p>
+          </div>
+        </div>
+        <div class="message assistant">
+          <div class="avatar">AI</div>
+          <div class="content">
+            <p class="speaker">ChatGPT</p>
+            <p>The central relationship is Users to Pets. One user can own many pets, and each pet can have many sensor readings and alerts. AI chat sessions can optionally connect to a pet so previous advice can be reviewed later. Community and shop functions are connected to the user account.</p>
+            <table>
+              <thead>
+                <tr>
+                  <th>Relationship</th>
+                  <th>Cardinality</th>
+                  <th>Purpose</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Users to Pets</td>
+                  <td>One-to-many</td>
+                  <td>One owner can manage multiple exotic pets.</td>
+                </tr>
+                <tr>
+                  <td>Pets to SensorReadings</td>
+                  <td>One-to-many</td>
+                  <td>Each pet has a history of monitoring readings.</td>
+                </tr>
+                <tr>
+                  <td>SensorReadings to Alerts</td>
+                  <td>One-to-many / optional</td>
+                  <td>Abnormal readings can trigger alert records.</td>
+                </tr>
+                <tr>
+                  <td>Users to ChatSessions</td>
+                  <td>One-to-many</td>
+                  <td>Each user can save AI conversations.</td>
+                </tr>
+                <tr>
+                  <td>Users to CommunityPosts</td>
+                  <td>One-to-many</td>
+                  <td>Users can share pet updates in the community.</td>
+                </tr>
+                <tr>
+                  <td>CommunityPosts to CommunityComments</td>
+                  <td>One-to-many</td>
+                  <td>Each community post can receive multiple comments.</td>
+                </tr>
+                <tr>
+                  <td>Users to Orders</td>
+                  <td>One-to-many</td>
+                  <td>One user can place many shop orders.</td>
+                </tr>
+                <tr>
+                  <td>Orders to OrderItems</td>
+                  <td>One-to-many</td>
+                  <td>Each order can contain multiple products.</td>
+                </tr>
+                <tr>
+                  <td>Users to Subscriptions</td>
+                  <td>One-to-many</td>
+                  <td>Subscription records track premium plan status.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-      <div class="block output">
-        <p class="label">Representative Raw AI Output</p>
-        <p>The central relationship is Users to Pets. One user can own many pets, and each pet can have many devices, readings, alerts, and care tasks. AI chat sessions can optionally connect to a specific pet so the assistant's advice can be reviewed later.</p>
-        <table>
-          <thead>
-            <tr>
-              <th>Relationship</th>
-              <th>Cardinality</th>
-              <th>Purpose</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Users to Pets</td>
-              <td>One-to-many</td>
-              <td>One owner can manage multiple exotic pets.</td>
-            </tr>
-            <tr>
-              <td>Pets to SensorReadings</td>
-              <td>One-to-many</td>
-              <td>Each pet has a history of monitoring readings.</td>
-            </tr>
-            <tr>
-              <td>SensorReadings to Alerts</td>
-              <td>One-to-many / optional</td>
-              <td>Abnormal readings can trigger alert records.</td>
-            </tr>
-            <tr>
-              <td>Users to ChatSessions</td>
-              <td>One-to-many</td>
-              <td>Each user can save AI conversations.</td>
-            </tr>
-            <tr>
-              <td>Users to CommunityPosts</td>
-              <td>One-to-many</td>
-              <td>Users can share pet updates in the community.</td>
-            </tr>
-            <tr>
-              <td>Users to Subscriptions</td>
-              <td>One-to-many</td>
-              <td>Subscription records track premium plan status.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <p class="small">Compatible saved partial page: Database Schema Records, Prompt 2.</p>
     </section>
 
-    <section class="page-break">
-      <span class="tag">Raw Record 8</span>
-      <h2>ERD Cluster Refinement</h2>
-      <div class="block prompt">
-        <p class="label">Prompt Used</p>
-        <p>Please reorganize the ReptiMind schema into an ERD that is easy to explain in a report. Group related tables into visual clusters and explain how the ERD supports the final app functions.</p>
+    <section class="screenshot-block">
+      <p class="block-title">Screenshot Block 8 - ERD Refinement</p>
+      <div class="chat">
+        <div class="message user">
+          <div class="avatar">U</div>
+          <div class="content">
+            <p class="speaker">User</p>
+            <p>Please reorganize the ReptiMind schema into an ERD that is easy to explain in a report. Group related tables into visual clusters and explain how the ERD supports the final app functions.</p>
+          </div>
+        </div>
+        <div class="message assistant">
+          <div class="avatar">AI</div>
+          <div class="content">
+            <p class="speaker">ChatGPT</p>
+            <p>The ERD can be organized into four clusters:</p>
+            <ul>
+              <li><strong>User and pet care cluster:</strong> Users, Pets, Subscriptions.</li>
+              <li><strong>Monitoring and AI cluster:</strong> SensorReadings, Alerts, ChatSessions, ChatMessages.</li>
+              <li><strong>Community cluster:</strong> CommunityPosts, CommunityComments.</li>
+              <li><strong>Products and orders cluster:</strong> Products, Orders, OrderItems.</li>
+            </ul>
+            <p>This clustering follows the user's journey: create a profile, add pets, monitor care, ask AI questions, participate in community, and optionally use shopping or premium features.</p>
+          </div>
+        </div>
       </div>
-      <div class="block output">
-        <p class="label">Representative Raw AI Output</p>
-        <p>The ERD can be organized into four clusters:</p>
-        <ul>
-          <li><strong>User and pet profile cluster:</strong> Users, Pets, Species, Subscriptions.</li>
-          <li><strong>Monitoring and care cluster:</strong> Devices, SensorReadings, Alerts, CareTasks.</li>
-          <li><strong>AI assistant cluster:</strong> ChatSessions and ChatMessages.</li>
-          <li><strong>Community and commerce cluster:</strong> CommunityPosts, Products, Orders or shopping-related records.</li>
-        </ul>
-        <p>This clustering makes the database easier to read because it follows the app's user journey: create a profile, add pets, monitor care, ask AI questions, participate in community, and optionally purchase products or premium features.</p>
-      </div>
-      <p class="small">Compatible saved partial page: Database Schema Records, Prompt 3.</p>
-    </section>
-
-    <section class="page-break">
-      <span class="tag">Appendix Use</span>
-      <h2>Recommended Placement in Final PDF</h2>
-      <ul>
-        <li>Use the two saved partial pages for close-up screenshots of prompts, key outputs, and first-person refinement explanations.</li>
-        <li>Use this consolidated archive when the appendix needs a broader record of AI-assisted development.</li>
-        <li>In the appendix caption, describe these as consolidated and representative AI records based on saved prompt pages and final project files.</li>
-        <li>Include the GitHub repository link in the main PDF if the prototype is submitted as an optional supplementary prototype.</li>
-      </ul>
     </section>
   </main>
 </body>
